@@ -1,4 +1,4 @@
-import 'package:edupot/view/screens/authentication/login.dart';
+import 'package:edupot/view/screens/onboarding/screen_onboarding.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -8,7 +8,8 @@ class SplashScreen extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeInAnimation;
 
@@ -37,7 +38,7 @@ class SplashScreenState extends State<SplashScreen> with SingleTickerProviderSta
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => OnboardingScreen(),
         ),
       );
     });

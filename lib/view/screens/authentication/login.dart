@@ -1,6 +1,6 @@
 import 'package:edupot/view/screens/authentication/forgot_password_screen.dart';
+import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -110,9 +110,12 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: PrimaryButton(onPressed: () {  }, text: 'Login',
-                 
-                
+                child: PrimaryButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => CustomBottomNavigation()));
+                  },
+                  text: 'Login',
                 ),
               ),
               SizedBox(height: 24),

@@ -1,3 +1,4 @@
+import 'package:edupot/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -5,10 +6,10 @@ class PrimaryButton extends StatelessWidget {
   final String text;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple[700],
+          backgroundColor: primaryButton,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
