@@ -1,3 +1,4 @@
+import 'package:edupot/core/constants/colors.dart';
 import 'package:edupot/view/screens/authentication/forgot_password_screen.dart';
 import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple[700],
+                    color: primaryButton
                   ),
                 ),
               ),

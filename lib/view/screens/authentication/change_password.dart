@@ -1,5 +1,6 @@
 
 
+import 'package:edupot/core/constants/colors.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.purple[700],
+                    color:primaryButton
                   ),
                 ),
               ),
