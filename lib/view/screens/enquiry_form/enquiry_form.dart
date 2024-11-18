@@ -1,4 +1,5 @@
 import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/screens/enquiry_form/controller/enquiry_controller.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
@@ -17,7 +18,10 @@ class EnquiryForm extends StatelessWidget {
         title: 'Add Enquiry',
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+             Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CustomBottomNavigation()));
           },
           icon: Icon(Icons.arrow_back, color: Colors.white),
         ),
@@ -80,18 +84,7 @@ class EnquiryForm extends StatelessWidget {
                     onSaved: (value) {},
                     validator: requiredValidator,
                   ),
-                  CustomDropdownField(
-                    label: 'Owner',
-                    icon: Icons.help_outline,
-                    items: [
-                      'Kitchen Design',
-                      'Interior Decoration',
-                      'Renovation',
-                      'Other'
-                    ],
-                    validator: requiredValidator,
-                    onChanged: (value) {},
-                  ),
+                 
                   
                   // Stream Dropdown with conditional text field
                   Obx(() {

@@ -1,9 +1,10 @@
 import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/data/models/leads_model.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 
 class StudentDetailsScreen extends StatelessWidget {
-  final Student student;
+  final Lead student;
 
   const StudentDetailsScreen({super.key, required this.student});
 
@@ -34,7 +35,7 @@ class StudentDetailsScreen extends StatelessWidget {
 }
 
 class StudentNameHeader extends StatelessWidget {
-  final Student student;
+  final Lead student;
 
   const StudentNameHeader({super.key, required this.student});
 
@@ -61,7 +62,7 @@ class StudentNameHeader extends StatelessWidget {
 }
 
 class ContactInformationSection extends StatelessWidget {
-  final Student student;
+  final Lead student;
 
   const ContactInformationSection({super.key, required this.student});
 
@@ -73,8 +74,8 @@ class ContactInformationSection extends StatelessWidget {
       children: [
         InformationTile(
           icon: Icons.email_outlined,
-          title: 'Email',
-          subtitle: student.email,
+          title: 'Address',
+          subtitle: student.address,
         ),
         InformationTile(
           icon: Icons.phone_outlined,
@@ -97,7 +98,7 @@ class ContactInformationSection extends StatelessWidget {
 }
 
 class AcademicInformationSection extends StatelessWidget {
-  final Student student;
+  final Lead student;
 
   const AcademicInformationSection({super.key, required this.student});
 
@@ -265,32 +266,32 @@ class FullWidthActionButton extends StatelessWidget {
   }
 }
 
-class Student {
-  final String id;
-  final String name;
-  final String email;
-  final String phone;
-  final String parentName;
-  final String parentPhone;
-  final String stream;
-  final String status;
-  final String stage;
-  final String remark;
-  final int priority;
-  final String photoUrl;
+// class Student {
+//   final String id;
+//   final String name;
+//   final String email;
+//   final String phone;
+//   final String parentName;
+//   final String parentPhone;
+//   final String stream;
+//   final String status;
+//   final String stage;
+//   final String remark;
+//   final int priority;
+  
 
-  Student({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.parentName,
-    required this.parentPhone,
-    required this.stream,
-    required this.status,
-    required this.stage,
-    required this.remark,
-    required this.priority,
-    this.photoUrl = '', // Default to empty if not used
-  });
-}
+//   Student({
+//     required this.id,
+//     required this.name,
+//     required this.email,
+//     required this.phone,
+//     required this.parentName,
+//     required this.parentPhone,
+//     required this.stream,
+//     required this.status,
+//     required this.stage,
+//     required this.remark,
+//     required this.priority,
+  
+//   });
+// }

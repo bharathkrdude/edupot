@@ -2,7 +2,7 @@ import 'package:edupot/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
 
   const PrimaryButton({

@@ -30,12 +30,14 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.2
+  dio: ^5.7.0
   flutter:
     sdk: flutter
   fluttertoast: ^8.2.8
   get: ^4.6.6
   google_fonts: ^6.2.1
   http: ^1.2.2
+  provider: ^6.1.2
   shared_preferences: ^2.3.2
 
 dev_dependencies:

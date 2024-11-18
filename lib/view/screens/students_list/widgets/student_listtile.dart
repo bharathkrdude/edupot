@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 
 class StudentListTile extends StatelessWidget {
   final String name;
-  final String grade;
+  final String stream;
   final String phone;
-  final String imageUrl;
+ 
   final VoidCallback? onPressed; // Add the onPressed callback
 
   const StudentListTile({
     super.key,
     required this.name,
-    required this.grade,
+    required this.stream,
     required this.phone,
-    required this.imageUrl,
     required this.onPressed, // Initialize the onPressed callback
   });
 
@@ -52,8 +51,8 @@ class StudentListTile extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
+                  child: Image.asset(
+                   'assets/images/avathar.jpg',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -80,7 +79,7 @@ class StudentListTile extends StatelessWidget {
                             size: 16, color: Colors.blue.shade400),
                         const SizedBox(width: 6),
                         Text(
-                          grade,
+                          stream,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,

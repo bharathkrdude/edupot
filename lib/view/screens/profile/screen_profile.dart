@@ -1,11 +1,15 @@
-import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/core/services/authprovier.dart';
+import 'package:edupot/view/screens/authentication/login.dart';
+import 'package:edupot/view/screens/profile/change_password_screen.dart';
 import 'package:edupot/view/screens/profile/edit_profile.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,45 +47,43 @@ class ProfileScreen extends StatelessWidget {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
-                ), Text(
+                ),
+                Text(
                   '8087935135',
-                  style: TextStyle(color: Colors.black.withOpacity(0.7), fontSize: 16),
+                  style: TextStyle(
+                      color: Colors.black.withOpacity(0.7), fontSize: 16),
                 ),
                 Text(
                   'alwinjhonny@gmail.com',
                   style: TextStyle(color: Colors.grey[600], fontSize: 16),
                 ),
-                
+
                 SizedBox(height: 24),
 
                 // Info Cards
-               
+
                 SizedBox(height: 32),
 
-                // Menu Items
                 MenuItem(
-                  icon: Icons.school,
+                  icon: Icons.lock_reset_rounded,
                   color: Colors.blue.shade100,
-                  title: 'Education Information',
-                  onTap: () {},
+                  title: 'Change Password',
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ChangePassWordScreen()));
+                  },
                 ),
-                MenuItem(
-                  icon: Icons.card_membership,
-                  color: Colors.teal.shade100,
-                  title: 'Subscription Pack',
-                  onTap: () {},
-                ),
-                MenuItem(
-                  icon: Icons.payment,
-                  color: Colors.blue.shade100,
-                  title: 'Payment History',
-                  onTap: () {},
-                ),
+              
                 MenuItem(
                   icon: Icons.logout,
                   color: Colors.red.shade100,
                   title: 'Logout',
-                  onTap: () {},
+                  onTap: () {
+                    // Access the AuthProvider and perform logout
+              context.read<AuthProvider>().logout();
+              // Navigate to LoginScreen using Get
+              Get.offAll(() => LoginScreen());
+                  },
                 ),
               ],
             ),
@@ -134,7 +136,11 @@ class MenuItem extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
 
-  MenuItem({required this.icon, required this.color, required this.title, required this.onTap});
+  const MenuItem(
+      {super.key, required this.icon,
+      required this.color,
+      required this.title,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {

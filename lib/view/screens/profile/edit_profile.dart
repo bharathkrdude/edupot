@@ -3,6 +3,8 @@ import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatelessWidget {
+  const EditProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +25,6 @@ class EditProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-       
-      
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -67,7 +67,8 @@ class EditProfileScreen extends StatelessWidget {
                         ),
                         child: CircleAvatar(
                           radius: 60,
-                          backgroundImage: NetworkImage('https://publichealth.uga.edu/wp-content/uploads/2020/01/Thomas-Cameron_Student_Profile.jpg'),
+                          backgroundImage: NetworkImage(
+                              'https://publichealth.uga.edu/wp-content/uploads/2020/01/Thomas-Cameron_Student_Profile.jpg'),
                         ),
                       ),
                       Positioned(
@@ -93,9 +94,9 @@ class EditProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             SizedBox(height: 20),
-            
+
             // Info Cards
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -111,7 +112,7 @@ class EditProfileScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16),
-                  
+
                   // Name Card
                   Container(
                     decoration: BoxDecoration(
@@ -126,81 +127,42 @@ class EditProfileScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: ListTile(
-                      leading: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
+                    child: TextField(
+                      style: TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
                         ),
-                        child: Icon(Icons.person_outline, color: Colors.blue),
-                      ),
-                      title: Text(
-                        'Name',
-                        style: TextStyle(
-                          fontSize: 14,
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child:
+                                Icon(Icons.person_outline, color: Colors.blue),
+                          ),
+                        ),
+                        labelText: 'Name',
+                        hintText: 'Alwin jhonny',
+                        labelStyle: TextStyle(
                           color: Colors.grey,
+                          fontSize: 14,
                         ),
-                      ),
-                      subtitle: Text(
-                        'Alwin jhonny',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
                   ),
-                  
+
                   SizedBox(height: 16),
-                  
-                  // Email Card
+
+// Email Card
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 10,
-                          offset: Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    child: ListTile(
-                      leading: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.email_outlined, color: Colors.purple),
-                      ),
-                      title: Text(
-                        'Email',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      subtitle: Text(
-                        'alwinjhonny@gmail.com',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 16),
-                  
-                  // Phone Number Card
-                  Container(
-                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
@@ -214,11 +176,64 @@ class EditProfileScreen extends StatelessWidget {
                       ],
                     ),
                     child: TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(fontSize: 16),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide.none,
                         ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.purple.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(Icons.email_outlined,
+                                color: Colors.purple),
+                          ),
+                        ),
+                        labelText: 'Email',
+                        hintText: 'alwinjhonny@gmail.com',
+                        labelStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16),
+
+// Phone Number Card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      style: TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
                         prefixIcon: Container(
                           padding: EdgeInsets.all(8),
                           child: Container(
@@ -227,7 +242,8 @@ class EditProfileScreen extends StatelessWidget {
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Icon(Icons.phone_outlined, color: Colors.green),
+                            child:
+                                Icon(Icons.phone_outlined, color: Colors.green),
                           ),
                         ),
                         labelText: 'Phone Number',
@@ -239,23 +255,20 @@ class EditProfileScreen extends StatelessWidget {
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
-            
+
             SizedBox(height: 32),
-            
+
             // Submit Button
             Padding(
               padding: EdgeInsets.all(16),
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 height: 55,
-                child: PrimaryButton(
-                  onPressed: (){}, 
-                  text: 'Save Changes'
-                ),
+                child: PrimaryButton(onPressed: () {}, text: 'Save Changes'),
               ),
             ),
           ],

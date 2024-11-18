@@ -1,15 +1,14 @@
-
-
 import 'package:flutter/material.dart';
+
 class ProfilePhotoWidget extends StatelessWidget {
   final String? photoUrl;
   final VoidCallback onEditTap; // Callback for edit button
 
   const ProfilePhotoWidget({
-    Key? key,
+    super.key,
     this.photoUrl,
     required this.onEditTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

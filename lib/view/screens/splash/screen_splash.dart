@@ -1,5 +1,8 @@
-import 'package:edupot/view/screens/onboarding/screen_onboarding.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edupot/view/screens/onboarding/screen_onboarding.dart';
+import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,13 +20,11 @@ class SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Initialize the AnimationController
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
 
-    // Fade in animation
     _fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -31,16 +32,32 @@ class SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Start the animation
     _controller.forward();
 
-    // Navigate to Login Page after a delay
+    // Check for token and navigate accordingly
+    _checkTokenAndNavigate();
+  }
+
+  Future<void> _checkTokenAndNavigate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => OnboardingScreen(),
-        ),
-      );
+      if (token != null) {
+        print("Token found, navigating to CustomBottomNavigation");
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CustomBottomNavigation(),
+          ),
+        );
+      } else {
+        print("No token found, navigating to OnboardingScreen");
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => OnboardingScreen(),
+          ),
+        );
+      }
     });
   }
 
@@ -59,7 +76,7 @@ class SplashScreenState extends State<SplashScreen>
         child: Center(
           child: Image.asset(
             'assets/images/splash.png',
-            fit: BoxFit.contain, // Ensure the image fits within the screen
+            fit: BoxFit.contain,
           ),
         ),
       ),

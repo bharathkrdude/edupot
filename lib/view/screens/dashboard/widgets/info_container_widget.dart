@@ -20,8 +20,8 @@ class InfoContainerWidget extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(16),
       ),
-      height: MediaQuery.of(context).size.height * 0.08,
-      width: MediaQuery.of(context).size.width * 0.29, // Increased width
+      height: MediaQuery.of(context).size.height * 0.07,
+      width: MediaQuery.of(context).size.width * 0.3, // Increased width
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
