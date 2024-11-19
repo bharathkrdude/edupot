@@ -2,12 +2,11 @@
 
 import 'package:edupot/core/constants/colors.dart';
 import 'package:edupot/core/constants/constants.dart';
+import 'package:edupot/view/screens/enquiry_form/widgets/custom_textfield.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../enquiry_form/enquiry_form.dart';
 
 
 class ChangePassWordScreen extends StatelessWidget {

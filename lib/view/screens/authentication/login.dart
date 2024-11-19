@@ -161,28 +161,29 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+Future<void> _handleLogin(AuthProvider authProvider) async {
+  if (_formKey.currentState!.validate()) {
+    final success = await authProvider.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+    if (!mounted) return; // Check if widget is still mounted
 
-  Future<void> _handleLogin(AuthProvider authProvider) async {
-    if (_formKey.currentState!.validate()) {
-      final success = await authProvider.login(
-        _emailController.text,
-        _passwordController.text,
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => CustomBottomNavigation(),
+        ),
       );
-      if (success) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => CustomBottomNavigation(),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed. Please try again.'),
-          ),
-        );
-      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed. Please try again.'),
+        ),
+      );
     }
   }
+}
 
   @override
   void dispose() {

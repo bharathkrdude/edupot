@@ -55,9 +55,9 @@ class SubjectExperienceSection extends StatelessWidget {
   final List<SubjectExperienceItem> subjects;
 
   const SubjectExperienceSection({
-    Key? key,
+    super.key,
     required this.subjects, required Null Function(dynamic subject, dynamic isSelected) onSubjectSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

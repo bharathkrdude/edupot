@@ -65,4 +65,34 @@ class ApiService {
       throw Exception('Failed to load leads: $e');
     }
   }
+
+
+  // post
+  
+  Future<bool> addLead(Lead lead) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      final response = await _dio.post(
+        'https://esmagroup.online/edupot/api/v1/leads-store',
+        data: lead.toJson(),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Failed to add lead: $e');
+    }
+  }
 }

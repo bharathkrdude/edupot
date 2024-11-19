@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class EnquiryFormController extends GetxController {
   final formKey = GlobalKey<FormState>();
-  final status = ''.obs;
+
+  // Separate observables for Stream and Stage
   final selectedStream = ''.obs;
+  final selectedStage = ''.obs;
+
   final stageItems = <String>[].obs;
 
   void updateStageItems(String? selectedStatus) {
     if (selectedStatus == null || selectedStatus.isEmpty) {
       stageItems.clear();
-      selectedStream.value = ''; // Reset selectedStream
+      selectedStage.value = ''; // Reset selectedStage
       return;
     }
 
@@ -21,16 +25,16 @@ class EnquiryFormController extends GetxController {
         stageItems.value = ['Zoom', 'Physical Meeting', 'Closed', 'Not Interested'].toSet().toList();
         break;
       case 'Cold':
-        stageItems.value = ['DND', 'RNR', 'Call Back'].toSet().toList();
+        stageItems.value = ['DNP', 'RNR', 'Call Back'].toSet().toList();
         break;
       default:
         stageItems.clear();
-        selectedStream.value = ''; // Reset selectedStream
+        selectedStage.value = ''; // Reset selectedStage
     }
 
-    // Reset selectedStream if it's not in stageItems
-    if (!stageItems.contains(selectedStream.value)) {
-      selectedStream.value = '';
+    // Reset selectedStage if it's not in stageItems
+    if (!stageItems.contains(selectedStage.value)) {
+      selectedStage.value = '';
     }
   }
 

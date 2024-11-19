@@ -5,12 +5,13 @@ import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
+  const ChangePasswordScreen({super.key});
+
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  bool _obscureOldPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
 

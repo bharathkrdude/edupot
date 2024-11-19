@@ -121,13 +121,13 @@ class HomePage extends GetView<NavigationController> {
 }
 
 class SearchPage extends GetView<NavigationController> {
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage({super.key});
   @override
   Widget build(BuildContext context) => Center(child: Text('Search Page'));
 }
 
 class NotificationsPage extends GetView<NavigationController> {
-  const NotificationsPage({Key? key}) : super(key: key);
+  const NotificationsPage({super.key});
   @override
   Widget build(BuildContext context) => Center(child: Text('Notifications Page'));
 }

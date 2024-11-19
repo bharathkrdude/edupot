@@ -99,7 +99,7 @@ class InfoCard extends StatelessWidget {
   final String value;
   final Color color;
 
-  InfoCard({required this.title, required this.value, required this.color});
+   const InfoCard({super.key, required this.title, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {

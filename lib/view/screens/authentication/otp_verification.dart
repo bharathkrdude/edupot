@@ -5,6 +5,8 @@ import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
+  const OtpVerificationScreen({super.key});
+
   @override
   _OtpVerificationScreenState createState() => _OtpVerificationScreenState();
 }
