@@ -9,5 +9,16 @@ class LeadProvider with ChangeNotifier {
 
   Future<bool> addLead(Lead lead) async {
     return await apiService.addLead(lead);
+    
+  }
+  // Updated fetchLeads with pagination parameters
+ Future<Map<String, dynamic>> fetchLeads({
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    return await apiService.fetchLeads(
+      page: page,
+      perPage: perPage,
+    );
   }
 }

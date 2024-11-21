@@ -19,14 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: leading ?? Builder(
-        builder: (context) => IconButton(
-          onPressed: () {
-            Navigator.pop(context);  // Pop the current screen
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-        ),
-      ),
+      leading: leading ,
       backgroundColor: primaryButton,
       titleTextStyle: TextStyle(
         fontSize: 24,

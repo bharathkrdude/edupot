@@ -1,12 +1,16 @@
 import 'package:edupot/core/constants/colors.dart';
 import 'package:edupot/data/models/leads_model.dart';
+import 'package:edupot/view/screens/enquiry_form/widgets/custom_textfield.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
+import 'package:edupot/view/widgets/primary_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class StudentDetailsScreen extends StatelessWidget {
   final Lead student;
+   final VoidCallback? onContact;
 
-  const StudentDetailsScreen({super.key, required this.student});
+  const StudentDetailsScreen({super.key, required this.student, this.onContact});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,12 @@ class StudentDetailsScreen extends StatelessWidget {
               SizedBox(height: 20),
               AcademicInformationSection(student: student),
               SizedBox(height: 20),
-              FullWidthActionButton(phone: student.phone),
+              PrimaryButton(onPressed: onContact ?? () {
+                      // Default action for contact (e.g., call or message)
+                      if (kDebugMode) {
+                        print('Contacting ');
+                      }
+                    }, text: 'Contact')
             ],
           ),
         ),
@@ -44,16 +53,16 @@ class StudentNameHeader extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
-        color: primaryButton.withOpacity(0.1),
+        color: white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: Text(
-          student.name,
+          student.name.toUpperCase(),
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: primaryButton,
+            color: Colors.black87,
           ),
         ),
       ),
@@ -69,6 +78,7 @@ class ContactInformationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationSection(
+      onPressed: () => _editContactFields(context), // Define what happens on edit
       title: 'Contact Information',
       icon: Icons.contact_mail_outlined,
       children: [
@@ -105,6 +115,7 @@ class AcademicInformationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationSection(
+      onPressed: () => _editAcademicFields(context), // Define what happens on edit
       title: 'Academic Information',
       icon: Icons.school_outlined,
       children: [
@@ -142,38 +153,45 @@ class InformationSection extends StatelessWidget {
   final String title;
   final IconData icon;
   final List<Widget> children;
+  final VoidCallback onPressed;
 
   const InformationSection({
     super.key,
     required this.title,
     required this.icon,
     required this.children,
+    required this.onPressed, // Add onPressed as a required parameter
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(icon, color: primaryButton),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
+              const Spacer(),
+              IconButton(
+                onPressed: onPressed, // Use the onPressed parameter
+                icon: const Icon(Icons.edit, color: Colors.teal),
+              ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...children,
         ],
       ),
@@ -239,59 +257,104 @@ class InformationTile extends StatelessWidget {
   }
 }
 
-class FullWidthActionButton extends StatelessWidget {
-  final String phone;
-
-  const FullWidthActionButton({super.key, required this.phone});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          // Add call functionality here
-        },
-        icon: Icon(Icons.call, color: Colors.white),
-        label: Text('Call', style: TextStyle(color: Colors.white)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryButton,
-          padding: EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+void _editContactFields(BuildContext context) {
+  // Implement the logic to edit all fields in the section
+  // This could open a dialog where all fields can be edited
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: backgroundColorlightgrey,
+        title: const Text('Edit Contact Information'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(
+                label: 'Address', icon: Icons.mail, onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Phone', icon: Icons.call, onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Parent Name',
+                icon: Icons.person_2_outlined,
+                onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Parent Phone', icon: Icons.phone, onSaved: (Value) {})
+            // Add fields for editing here
+          ],
         ),
-      ),
-    );
-  }
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                iconColor: white, backgroundColor: primaryButton),
+            onPressed: () {
+              // Save all changes
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: white,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
-// class Student {
-//   final String id;
-//   final String name;
-//   final String email;
-//   final String phone;
-//   final String parentName;
-//   final String parentPhone;
-//   final String stream;
-//   final String status;
-//   final String stage;
-//   final String remark;
-//   final int priority;
-  
 
-//   Student({
-//     required this.id,
-//     required this.name,
-//     required this.email,
-//     required this.phone,
-//     required this.parentName,
-//     required this.parentPhone,
-//     required this.stream,
-//     required this.status,
-//     required this.stage,
-//     required this.remark,
-//     required this.priority,
-  
-//   });
-// }
+
+void _editAcademicFields(BuildContext context) {
+  // Implement the logic to edit all fields in the section
+  // This could open a dialog where all fields can be edited
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: backgroundColorlightgrey,
+        title: const Text('Edit Academic Information'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(
+                label: 'Stream', icon: Icons.straighten_sharp, onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Status', icon: Icons.star_border, onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Stage',
+                icon: Icons.person_2_outlined,
+                onSaved: (Value) {}),
+            CustomTextField(
+                label: 'Remark', icon: Icons.assignment_outlined, onSaved: (Value) {})
+            // Add fields for editing here
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                iconColor: white, backgroundColor: primaryButton),
+            onPressed: () {
+              // Save all changes
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: white,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}

@@ -15,7 +15,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
 
         // StudentViewModel is responsible for fetching students data
-        ChangeNotifierProvider(create: (_) => StudentViewModel()),
+        // ChangeNotifierProvider(create: (_) => StudentViewModel()),
+       
 
         // ApiService to handle API interactions
         Provider(create: (_) => ApiService()),
@@ -23,6 +24,11 @@ void main() {
         // LeadProvider depends on ApiService
         ChangeNotifierProvider(
           create: (context) => LeadProvider(apiService: context.read<ApiService>()),
+        ),
+         ChangeNotifierProvider<StudentViewModel>(
+          create: (context) => StudentViewModel(
+            context.read<LeadProvider>(),
+          ),
         ),
       ],
       child: const MyApp(),

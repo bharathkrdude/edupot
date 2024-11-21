@@ -3,7 +3,6 @@ import 'package:edupot/data/repositories/lead_provider.dart';
 import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/screens/enquiry_form/widgets/custom_dropdown.dart';
 import 'package:edupot/view/screens/enquiry_form/widgets/custom_textfield.dart';
-import 'package:edupot/view/screens/enquiry_form/widgets/star_rating.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:edupot/viewmodels/enquiry_form_viewmodel.dart';
@@ -30,10 +29,9 @@ class EnquiryForm extends StatelessWidget {
           title: 'Add Enquiry',
           leading: IconButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => CustomBottomNavigation(),
-          ));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => CustomBottomNavigation(),
+              ));
             },
             icon: Icon(Icons.arrow_back, color: Colors.white),
           ),
@@ -129,7 +127,6 @@ class EnquiryForm extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 8),
-                         
                         ],
                       ),
                     ),

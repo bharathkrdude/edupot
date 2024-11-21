@@ -28,8 +28,6 @@
 //   }
 // }
 
-
-
 import 'package:dio/dio.dart';
 import 'package:edupot/data/models/leads_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +35,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   final Dio _dio = Dio();
 
-  Future<List<Lead>> fetchLeads() async {
+  // Original fetchLeads method (keep this for backward compatibility if needed)
+  Future<Map<String, dynamic>> fetchLeads({
+    int page = 1,
+    int perPage = 10,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
@@ -47,17 +49,28 @@ class ApiService {
       }
 
       final response = await _dio.get(
-        'https://esmagroup.online/edupot/api/v1/leads-list',
+        'https://esmagroup.online/edupot/api/v1/paginate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
           },
         ),
+        queryParameters: {
+          'page': page,
+          'per_page': perPage,
+        },
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = response.data['leads'];
-        return data.map((lead) => Lead.fromJson(lead)).toList();
+        // Return the complete response data
+        return {
+          'leads': (response.data['leads'] as List)
+              .map((lead) => Lead.fromJson(lead))
+              .toList(),
+          'total': response.data['total'] ?? 0,
+          'current_page': response.data['current_page'] ?? 1,
+          'last_page': response.data['last_page'] ?? 1,
+        };
       } else {
         throw Exception('Failed to load leads');
       }
@@ -65,10 +78,8 @@ class ApiService {
       throw Exception('Failed to load leads: $e');
     }
   }
-
-
   // post
-  
+
   Future<bool> addLead(Lead lead) async {
     try {
       final prefs = await SharedPreferences.getInstance();

@@ -33,6 +33,7 @@ dependencies:
   dio: ^5.7.0
   flutter:
     sdk: flutter
+  flutter_phone_direct_caller: ^2.1.1
   fluttertoast: ^8.2.8
   get: ^4.6.6
   google_fonts: ^6.2.1
