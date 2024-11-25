@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/view/screens/authentication/change_password.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -63,14 +64,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 ),
                 SizedBox(height: 20),
                 Center(
-                  child: Text(
-                    'Edupot',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: primaryButton,
-                    ),
-                  ),
+                  child: LogoWidget()
                 ),
                 SizedBox(height: 50),
                 Text(

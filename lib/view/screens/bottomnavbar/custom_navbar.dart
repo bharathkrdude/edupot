@@ -1,4 +1,5 @@
 import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/view/screens/college_list_screen/college_list_screen.dart';
 import 'package:edupot/view/screens/dashboard/dashboard_screen.dart';
 import 'package:edupot/view/screens/enquiry_form/enquiry_form.dart';
 import 'package:edupot/view/screens/profile/screen_profile.dart';
@@ -20,8 +21,8 @@ class CustomBottomNavigation extends GetView<NavigationController> {
     DashboardScreen(),
     ScreenStudents(),
     const SizedBox(), // Empty widget for center button
-    const NotificationsPage(),
-     ProfileScreen(),
+    const CollegeListScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -37,7 +38,7 @@ class CustomBottomNavigation extends GetView<NavigationController> {
             ),
           ),
         ),
-        
+
         // Bottom Navigation Bar
         Positioned(
           bottom: 0,
@@ -70,8 +71,8 @@ class CustomBottomNavigation extends GetView<NavigationController> {
                   label: '',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.block_flipped),
-                  label: 'Screen',
+                  icon: Icon(Icons.account_balance_outlined),
+                  label: 'Colleges',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_outline),
@@ -81,7 +82,7 @@ class CustomBottomNavigation extends GetView<NavigationController> {
             ),
           ),
         ),
-        
+
         // Floating Action Button
         Positioned(
           bottom: 20,
@@ -101,8 +102,8 @@ class CustomBottomNavigation extends GetView<NavigationController> {
                 elevation: 2,
                 onPressed: () {
                   // Handle FAB click
-                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => EnquiryForm()));
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => EnquiryForm()));
                 },
               ),
             ),
@@ -113,24 +114,8 @@ class CustomBottomNavigation extends GetView<NavigationController> {
   }
 }
 
-// Example page widgets
-class HomePage extends GetView<NavigationController> {
-  const HomePage({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) => Center(child: Text('Home Page'));
-}
 
-class SearchPage extends GetView<NavigationController> {
-  const SearchPage({super.key});
-  @override
-  Widget build(BuildContext context) => Center(child: Text('Search Page'));
-}
 
-class NotificationsPage extends GetView<NavigationController> {
-  const NotificationsPage({super.key});
-  @override
-  Widget build(BuildContext context) => Center(child: Text('Notifications Page'));
-}
 
 // Bottom sheet for FAB click
 class AddOptionsSheet extends GetView<NavigationController> {

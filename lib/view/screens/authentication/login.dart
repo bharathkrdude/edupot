@@ -1,10 +1,10 @@
+import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/core/services/authprovier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:edupot/view/screens/authentication/forgot_password_screen.dart';
 import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
-import 'package:edupot/core/constants/colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,138 +24,133 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 40),
-              // Logo
-              Center(
-                child: Text(
-                  'Edupot',
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40),
+                // Logo
+                Center(
+                  child: LogoWidget()
+                ),
+                SizedBox(height: 50),
+                // Login Text
+                Text(
+                  'Login',
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: primaryButton,
                   ),
                 ),
-              ),
-              SizedBox(height: 50),
-              // Login Text
-              Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 40),
-              // Form
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Email/Phone TextField
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        hintText: 'Email or Phone number',
-                        prefixIcon: Icon(Icons.email, color: Colors.grey),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[300]!),
+                SizedBox(height: 40),
+                // Form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Email/Phone TextField
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          hintText: 'Email or Phone number',
+                          prefixIcon: Icon(Icons.email, color: Colors.grey),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email or phone number';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email or phone number';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    // Password TextField
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscureText,
-                      decoration: InputDecoration(
-                        hintText: 'Password',
-                        prefixIcon: Icon(Icons.lock, color: Colors.grey),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[300]!),
+                      SizedBox(height: 16),
+                      // Password TextField
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            icon: Icon(
+                              _obscureText ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        suffixIcon: IconButton(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 12),
+                      // Forgot Password
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
                           onPressed: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordScreen(),
+                              ),
+                            );
                           },
-                          icon: Icon(
-                            _obscureText ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.grey,
+                          child: Text(
+                            'Forgot Your Password?',
+                            style: TextStyle(color: Colors.green[700]),
                           ),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 12),
-                    // Forgot Password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ForgotPasswordScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Forgot Your Password?',
-                          style: TextStyle(color: Colors.green[700]),
+                      SizedBox(height: 24),
+                      // Login Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Consumer<AuthProvider>(
+                          builder: (context, authProvider, child) {
+                            return PrimaryButton(
+                              onPressed: authProvider.isLoading
+                                  ? null
+                                  : () {
+                                      _handleLogin(authProvider);
+                                    },
+                              text: authProvider.isLoading ? 'Loading...' : 'Login',
+                            );
+                          },
                         ),
                       ),
-                    ),
-                    SizedBox(height: 24),
-                    // Login Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Consumer<AuthProvider>(
-                        builder: (context, authProvider, child) {
-                          return PrimaryButton(
-                            onPressed: authProvider.isLoading
-                                ? null
-                                : () {
-                                    _handleLogin(authProvider);
-                                  },
-                            text: authProvider.isLoading ? 'Loading...' : 'Login',
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -192,3 +187,4 @@ Future<void> _handleLogin(AuthProvider authProvider) async {
     super.dispose();
   }
 }
+

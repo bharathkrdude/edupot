@@ -1,4 +1,5 @@
 import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/view/screens/authentication/otp_verification.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +27,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 SizedBox(height: 20),
                 // Logo
                 Center(
-                  child: Text(
-                    'Edupot',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: primaryButton,
-                    ),
-                  ),
+                  child:LogoWidget()
                 ),
                 SizedBox(height: 50),
                 // Forgot Password Text

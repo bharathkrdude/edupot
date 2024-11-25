@@ -16,7 +16,7 @@ class StudentDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: CustomAppBar(title: 'Student Details'),
+      appBar: CustomAppBar(title: 'Student Details',leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new)),),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),

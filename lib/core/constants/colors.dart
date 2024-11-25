@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 const primaryButton= Color(0xFFB0007D);
 const primaryButton1= Color(0xFF00A9AB);
-
+const blueApp = Color(0xFF682EC2);
 const backgroundColorWhite = Colors.white;
 const backgroundColorlightgrey = Color(0xFFF4F5F9);
 const backgroundColorgrey = Color(0xFFF5F5F5);

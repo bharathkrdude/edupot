@@ -92,3 +92,17 @@ static const TextStyle heading3 = TextStyle(
   
 
 
+
+class LogoWidget extends StatelessWidget {
+  const LogoWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.2,
+      width: MediaQuery.of(context).size.width * 0.6,
+      child: Image.asset('assets/images/Logo Edupot-01.png',));
+  }
+}

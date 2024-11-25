@@ -74,7 +74,7 @@ class SplashScreenState extends State<SplashScreen>
         opacity: _fadeInAnimation,
         child: Center(
           child: Image.asset(
-            'assets/images/splash.png',
+            'assets/images/Logo Edupot-03.png',
             fit: BoxFit.contain,
           ),
         ),

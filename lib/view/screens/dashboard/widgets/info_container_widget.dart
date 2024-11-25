@@ -118,11 +118,7 @@ class SubjectExperienceRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            Icons.check_box_outline_blank_outlined,
-            size: 14,
-            color: Colors.black87,
-          ),
+        
           const SizedBox(width: 4),
           Expanded(
             child: Text(
