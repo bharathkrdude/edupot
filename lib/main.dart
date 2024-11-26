@@ -8,12 +8,13 @@ import 'package:provider/provider.dart';
 import 'package:edupot/view/screens/splash/screen_splash.dart';
 
 void main() {
+
   runApp(
     MultiProvider(
       providers: [
         // AuthProvider handles user authentication logic
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-
+ 
         // StudentViewModel is responsible for fetching students data
         // ChangeNotifierProvider(create: (_) => StudentViewModel()),
        

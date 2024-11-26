@@ -1,4 +1,3 @@
-import 'package:edupot/core/constants/colors.dart';
 import 'package:edupot/view/screens/college_list_screen/college_details_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -11,14 +10,14 @@ class CollegeCard extends StatelessWidget {
   final String imageUrl;
 
   const CollegeCard({
-    Key? key,
+    super.key,
     required this.collegeName,
     required this.location,
     required this.coursesOffered,
     required this.examsAccepted,
     required this.placementRating,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -99,81 +98,41 @@ class CollegeCard extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Courses Offered and Exams Accepted
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _detailColumn('Courses Offered', coursesOffered),
-                _detailColumn('Exams Accepted', examsAccepted),
-              ],
-            ),
-            const SizedBox(height: 16),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     _detailColumn('Courses Offered', coursesOffered),
+            //     _detailColumn('Exams Accepted', examsAccepted),
+            //   ],
+            // ),
+            // const SizedBox(height: 16),
 
             // Placement Rating
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _detailColumn(
-                  'Placement Rating',
-                  Row(
-                    children: [
-                      Icon(Icons.star, size: 16, color: Colors.amber),
-                      const SizedBox(width: 4),
-                      Text(
-                        placementRating,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     _detailColumn(
+            //       'Placement Rating',
+            //       Row(
+            //         children: [
+            //           Icon(Icons.star, size: 16, color: Colors.amber),
+            //           const SizedBox(width: 4),
+            //           Text(
+            //             placementRating,
+            //             style: TextStyle(
+            //               fontSize: 14,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 20),
 
             // Brochure Button
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Navigate to the details page via Brochure button as well
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CollegeDetailsScreen(
-                        collegeName: collegeName,
-                        location: location,
-                        coursesOffered: coursesOffered,
-                        examsAccepted: examsAccepted,
-                        placementRating: placementRating,
-                        imageUrl: imageUrl,
-                        brochureImages: [
-                          'https://via.placeholder.com/300.png',
-                          'https://via.placeholder.com/400.png',
-                          'https://via.placeholder.com/500.png',
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                icon: Icon(Icons.download, size: 18, color: white),
-                label: Text(
-                  'Download Brochure',
-                  style: TextStyle(color: white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryButton,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 12.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  textStyle: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
+           
           ],
         ),
       ),
@@ -194,7 +153,7 @@ class CollegeCard extends StatelessWidget {
             ? value
             : Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),

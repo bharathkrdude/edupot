@@ -1,11 +1,7 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:edupot/core/constants/colors.dart';
-import 'package:edupot/view/widgets/custom_appbar.dart';
-import 'package:edupot/view/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:edupot/core/constants/colors.dart'; // Import your custom colors
+import 'package:edupot/view/widgets/custom_appbar.dart'; // Import your custom appbar widget
 
 class CollegeDetailsScreen extends StatefulWidget {
   final String collegeName;
@@ -17,7 +13,7 @@ class CollegeDetailsScreen extends StatefulWidget {
   final List<String> brochureImages;
 
   const CollegeDetailsScreen({
-    Key? key,
+    super.key,
     required this.collegeName,
     required this.location,
     required this.coursesOffered,
@@ -25,71 +21,108 @@ class CollegeDetailsScreen extends StatefulWidget {
     required this.placementRating,
     required this.imageUrl,
     required this.brochureImages,
-  }) : super(key: key);
+  });
 
   @override
   State<CollegeDetailsScreen> createState() => _CollegeDetailsScreenState();
 }
 
 class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
-  bool isDownloading = false;
-  double downloadProgress = 0.0;
+  double downloadProgress = 0.0; // Track download progress
+  Dio dio = Dio(); // Instantiate Dio
+  String downloadPath = ''; // Download file path
 
-  Future<void> downloadImages() async {
-    // Request storage permission
-    if (await Permission.storage.request().isGranted) {
-      setState(() {
-        isDownloading = true;
-        downloadProgress = 0.0;
-      });
+  Future<void> downloadImage(String imageUrl) async {
+    try {
+      // Specify the path where you want to save the file
+      downloadPath = '/storage/emulated/0/Download/college_brochure_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      try {
-        // Get the directory to save images
-        final directory = await getExternalStorageDirectory();
-        final downloadPath = directory?.path ?? '';
+      // Start downloading the image
+      Response response = await dio.download(
+        imageUrl,
+        downloadPath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            setState(() {
+              downloadProgress = received / total;
+            });
+          }
+        },
+      );
 
-        Dio dio = Dio();
-
-        for (int i = 0; i < widget.brochureImages.length; i++) {
-          String imageUrl = widget.brochureImages[i];
-          String fileName = 'brochure_${i + 1}.png';
-          String savePath = '$downloadPath/$fileName';
-
-          await dio.download(
-            imageUrl,
-            savePath,
-            onReceiveProgress: (received, total) {
-              setState(() {
-                downloadProgress = (received / total) * ((i + 1) / widget.brochureImages.length);
-              });
-            },
-          );
-        }
-
+      // Check if the download is successful
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Brochures downloaded to $downloadPath')),
+          const SnackBar(
+            content: Text('Download completed successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      } finally {
-        setState(() {
-          isDownloading = false;
-        });
+      } else {
+        throw 'Failed to download image.';
       }
-    } else {
+    } catch (e) {
+      debugPrint('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
+        SnackBar(
+          content: Text('Download failed: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
+  }
+
+  void showImagePreview(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Image Preview
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Download Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                    downloadImage(imageUrl); // Start the download
+                  },
+                  icon: const Icon(Icons.download, color: white),
+                  label: const Text(
+                    'Download Image',
+                    style: TextStyle(color: white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryButton,
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                    textStyle: const TextStyle(fontSize: 16, color: white),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white,
-      appBar:CustomAppBar(title: 'College Details'),
+      appBar: CustomAppBar(title: 'College Details'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -111,7 +144,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                       children: [
                         Text(
                           widget.collegeName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.blue,
@@ -147,11 +180,11 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                 'Placement Rating',
                 Row(
                   children: [
-                    Icon(Icons.star, size: 16, color: Colors.amber),
+                    const Icon(Icons.star, size: 16, color: Colors.amber),
                     const SizedBox(width: 4),
                     Text(
                       widget.placementRating,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -162,7 +195,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
               const SizedBox(height: 24),
 
               // Brochure Images Section
-              Text(
+              const Text(
                 'Brochures',
                 style: TextStyle(
                   fontSize: 18,
@@ -172,39 +205,48 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
               const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
                 itemCount: widget.brochureImages.length,
                 itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.network(
-                      widget.brochureImages[index],
-                      fit: BoxFit.cover,
+                  final imageUrl = widget.brochureImages[index];
+                  return GestureDetector(
+                    onTap: () {
+                      showImagePreview(imageUrl);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 16),
 
-              // Download Button and Progress Indicator
-              if (isDownloading)
+              // Download Progress Indicator
+              if (downloadProgress > 0 && downloadProgress < 1)
                 Column(
                   children: [
-                    LinearProgressIndicator(value: downloadProgress),
+                    const Text(
+                      'Download in Progress...',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Downloading... ${(downloadProgress * 100).toStringAsFixed(2)}%',
+                    LinearProgressIndicator(
+                      value: downloadProgress,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.blue,
+                      minHeight: 8,
                     ),
                   ],
-                )
-              else
-              SizedBox(height: 40,),
-                // PrimaryButton(onPressed: downloadImages, text: 'Download All brochure images')
+                ),
             ],
           ),
         ),
@@ -225,13 +267,18 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
         value is Widget
             ? value
             : Text(
-                value,
-                style: TextStyle(
+                value.toString(),
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
