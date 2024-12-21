@@ -1,49 +1,37 @@
-import 'dart:async';
-import 'package:edupot/core/constants/colors.dart';
+// screens/otp_verification_screen.dart
 import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/view/screens/authentication/change_password.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
+import 'package:edupot/viewmodels/forgot_password_viewmodel.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({super.key});
+  final String email;
+
+  const OtpVerificationScreen({
+    super.key,
+    required this.email,
+  });
 
   @override
-  _OtpVerificationScreenState createState() => _OtpVerificationScreenState();
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-  List<TextEditingController> otpControllers = List.generate(
-    4,
+  final List<TextEditingController> otpControllers = List.generate(
+    6,
     (index) => TextEditingController(),
   );
 
-  List<FocusNode> focusNodes = List.generate(
-    4,
+  final List<FocusNode> focusNodes = List.generate(
+    6,
     (index) => FocusNode(),
   );
 
-  Timer? _timer;
-  int _start = 59;
-
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
-
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_start == 0) {
-        setState(() {
-          timer.cancel();
-        });
-      } else {
-        setState(() {
-          _start--;
-        });
-      }
-    });
+  void _onOtpDigitEntered(int index) {
+    if (index < 5 && otpControllers[index].text.isNotEmpty) {
+      focusNodes[index + 1].requestFocus();
+    }
   }
 
   @override
@@ -53,115 +41,118 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
                 ),
-                SizedBox(height: 20),
-                Center(
-                  child: LogoWidget()
-                ),
-                SizedBox(height: 50),
-                Text(
-                  'OTP Verification',
+                const Center(child: LogoWidget()),
+                const SizedBox(height: 50),
+                const Text(
+                  'Verify OTP',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
-                  'Enter the verification code we sent to your email/phone',
+                  'Enter the OTP sent to ${widget.email}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    4,
+                    6,
                     (index) => SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: TextField(
+                      width: 45,
+                      child: TextFormField(
                         controller: otpControllers[index],
                         focusNode: focusNodes[index],
-                        keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
                         maxLength: 1,
-                        style: TextStyle(fontSize: 24),
                         decoration: InputDecoration(
-                          counterText: "",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          counterText: '',
+                          border: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey[300]!),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.purple[700]!),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
                           ),
                         ),
                         onChanged: (value) {
-                          if (value.length == 1 && index < 3) {
-                            focusNodes[index + 1].requestFocus();
+                          if (value.isNotEmpty) {
+                            _onOtpDigitEntered(index);
                           }
                         },
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 40),
-                PrimaryButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChangePasswordScreen()),
-                    );
-                  },
-                  text: 'Verify',
-                ),
-                SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Didn't receive code? ",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    TextButton(
-                      onPressed: _start == 0
-                          ? () {
-                              setState(() {
-                                _start = 59;
-                                startTimer();
-                                // Add resend logic here
-                              });
-                            }
-                          : null,
-                      child: Text(
-                        'Resend',
-                        style: TextStyle(
-                          color: _start == 0 ? Colors.green[700] : Colors.grey,
+                const SizedBox(height: 40),
+                Consumer<ForgotPasswordViewModel>(
+                  builder: (context, viewModel, child) {
+                    if (viewModel.error.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          viewModel.error,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
-                    ),
-                  ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
-                Center(
-                  child: Text(
-                    'Resend code in 00:${_start.toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: Consumer<ForgotPasswordViewModel>(
+                    builder: (context, viewModel, child) {
+                      return PrimaryButton(
+                        onPressed: viewModel.isLoading
+                            ? null
+                            : () async {
+                                final enteredOtp = otpControllers.map((c) => c.text).join();
+                                if (enteredOtp.length != 6) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please enter complete OTP'),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                final success = await viewModel.verifyOtp(
+                                  widget.email,
+                                  enteredOtp,
+                                );
+
+                                if (success && mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ChangePasswordScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                        text: viewModel.isLoading ? 'Verifying...' : 'Verify OTP',
+                      );
+                    },
                   ),
                 ),
               ],
@@ -180,7 +171,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     for (var node in focusNodes) {
       node.dispose();
     }
-    _timer?.cancel();
     super.dispose();
   }
 }

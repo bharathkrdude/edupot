@@ -1,11 +1,20 @@
-import 'package:edupot/core/constants/colors.dart';
+// screens/forgot_password_screen.dart
 import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/view/screens/authentication/otp_verification.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
+import 'package:edupot/viewmodels/forgot_password_viewmodel.dart';
 import 'package:flutter/material.dart';
-
-class ForgotPasswordScreen extends StatelessWidget {
+import 'package:provider/provider.dart';
+class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
+
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -14,75 +23,113 @@ class ForgotPasswordScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 // Back Button
                 IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
                 ),
-                SizedBox(height: 20),
                 // Logo
-                Center(
-                  child:LogoWidget()
-                ),
-                SizedBox(height: 50),
+                const Center(child: LogoWidget()),
+                const SizedBox(height: 50),
                 // Forgot Password Text
-                Text(
+                const Text(
                   'Forgot Password',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
-                // Description Text
+                const SizedBox(height: 16),
                 Text(
-                  'Enter your email or phone number to reset your password',
+                  'Enter your email to reset your password',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(height: 40),
-                // Email/Phone TextField
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Email or Phone number',
-                    prefixIcon: Icon(Icons.email, color: Colors.grey),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 40),
-                // Reset Password Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: PrimaryButton(onPressed: (){ Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OtpVerificationScreen()));}, text: 'Submit')
-                ),
-                SizedBox(height: 24),
-                // Back to Login
-                Center(
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      'Back to Login',
-                      style: TextStyle(color: Colors.green[700]),
-                    ),
+                const SizedBox(height: 40),
+                // Form
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Consumer<ForgotPasswordViewModel>(
+                        builder: (context, viewModel, child) {
+                          return TextFormField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              hintText: 'Email',
+                              prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              focusedBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
+                              errorText: viewModel.error.isNotEmpty ? viewModel.error : null,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              return null;
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 40),
+                      // Send OTP Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: Consumer<ForgotPasswordViewModel>(
+                          builder: (context, viewModel, child) {
+                            return PrimaryButton(
+                              onPressed: viewModel.isLoading
+                                  ? null
+                                  : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        final success = await viewModel.sendOtp(
+                                          _emailController.text,
+                                        );
+
+                                        if (success && mounted) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => OtpVerificationScreen(
+                                                email: _emailController.text,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                              text: viewModel.isLoading ? 'Sending...' : 'Send OTP',
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Back to Login
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'Back to Login',
+                            style: TextStyle(color: Colors.green[700]),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -91,5 +138,11 @@ class ForgotPasswordScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 }

@@ -7,7 +7,7 @@ class AppSizes {
     return MediaQuery.of(context).size.width;
   }
 }
-   
+
 const kHeight10 = SizedBox(height: 10);
 const kHeight5 = SizedBox(height: 5);
 const kHeight20 = SizedBox(height: 20);
@@ -28,7 +28,6 @@ const kWidth30 = SizedBox(width: 30);
 const kWidth40 = SizedBox(width: 40);
 const kWidth50 = SizedBox(width: 50);
 
-
 // Textstyles
 class TextStyles {
   static const TextStyle heading1 = TextStyle(
@@ -36,7 +35,16 @@ class TextStyles {
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );
-
+  static TextStyle SubtitleCollege = TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        )
+                      ;
+  static const TextStyle headingCollege = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  );
   static const TextStyle heading2 = TextStyle(
     fontSize: 17.0,
     fontWeight: FontWeight.bold,
@@ -47,16 +55,15 @@ class TextStyles {
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
-   static const TextStyle bodyTextWhitesmall = TextStyle(
+  static const TextStyle bodyTextWhitesmall = TextStyle(
     fontSize: 13.0,
     fontWeight: FontWeight.w400,
     color: Colors.white,
   );
-static const TextStyle heading3 = TextStyle(
+  static const TextStyle heading3 = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: Colors.black,
-    
   );
   static const TextStyle bodyText = TextStyle(
     fontSize: 16.0,
@@ -84,14 +91,9 @@ static const TextStyle heading3 = TextStyle(
   static const TextStyle bodySmall = TextStyle(
     fontSize: 16.0,
     fontWeight: FontWeight.normal,
-    color: Colors.black,  // Hint text color set to grey
+    color: Colors.black, // Hint text color set to grey
   );
- 
 }
-
-  
-
-
 
 class LogoWidget extends StatelessWidget {
   const LogoWidget({
@@ -101,8 +103,10 @@ class LogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.2,
-      width: MediaQuery.of(context).size.width * 0.6,
-      child: Image.asset('assets/images/Logo Edupot-01.png',));
+        height: MediaQuery.of(context).size.height * 0.2,
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Image.asset(
+          'assets/images/Logo Edupot-01.png',
+        ));
   }
 }

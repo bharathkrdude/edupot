@@ -17,9 +17,9 @@ class StudentViewModel extends ChangeNotifier {
   StudentViewModel(this._leadProvider) {
     fetchStudents();
   }
-
   // Getter for students (returns filtered list if search is active)
-  List<Lead> get students => _filteredStudents.isNotEmpty ? _filteredStudents : _students;
+  List<Lead> get students =>
+      _filteredStudents.isNotEmpty ? _filteredStudents : _students;
   bool get isLoading => _isLoading;
   bool get hasMoreData => _currentPage < _totalPages;
   String get errorMessage => _errorMessage;
@@ -59,7 +59,6 @@ class StudentViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
   // Refresh students (clear data and fetch again)
   Future<void> refreshStudents() async {
     _students.clear();
@@ -69,8 +68,7 @@ class StudentViewModel extends ChangeNotifier {
     notifyListeners();
     await fetchStudents();
   }
-
-  // Search functionality
+// Search functionality
   void searchStudents(String query) {
     if (query.isEmpty) {
       _filteredStudents = [];

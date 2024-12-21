@@ -1,26 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:edupot/core/constants/colors.dart'; // Import your custom colors
-import 'package:edupot/view/widgets/custom_appbar.dart'; // Import your custom appbar widget
+import 'package:edupot/core/constants/colors.dart';
+import 'package:edupot/view/widgets/custom_appbar.dart';
 
 class CollegeDetailsScreen extends StatefulWidget {
-  final String collegeName;
-  final String location;
-  final String coursesOffered;
-  final String examsAccepted;
-  final String placementRating;
-  final String imageUrl;
-  final List<String> brochureImages;
+  final String name;
+  final String university;
+  final String address;
+  final String about;
+  final String logo;
+  final List<String> images;
 
   const CollegeDetailsScreen({
     super.key,
-    required this.collegeName,
-    required this.location,
-    required this.coursesOffered,
-    required this.examsAccepted,
-    required this.placementRating,
-    required this.imageUrl,
-    required this.brochureImages,
+    required this.name,
+    required this.university,
+    required this.address,
+    required this.about,
+    required this.logo,
+    required this.images,
   });
 
   @override
@@ -118,6 +116,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,12 +128,12 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // College Avatar and Name
+              // College Logo and Name
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(widget.logo),
                     radius: 30,
                   ),
                   const SizedBox(width: 16),
@@ -143,7 +142,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.collegeName,
+                          widget.name,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -152,7 +151,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.location,
+                          widget.address,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -163,40 +162,19 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Courses Offered and Exams Accepted
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _detailColumn('Courses Offered', widget.coursesOffered),
-                  _detailColumn('Exams Accepted', widget.examsAccepted),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Placement Rating
-              _detailColumn(
-                'Placement Rating',
-                Row(
-                  children: [
-                    const Icon(Icons.star, size: 16, color: Colors.amber),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.placementRating,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 24),
 
-              // Brochure Images Section
+              // University
+              _detailSection('University', widget.university),
+              const SizedBox(height: 16),
+
+              // About Section
+              _detailSection('About', widget.about),
+              const SizedBox(height: 24),
+
+              // College Images Section
               const Text(
-                'Brochures',
+                'Brochure',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -211,9 +189,9 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
-                itemCount: widget.brochureImages.length,
+                itemCount: widget.images.length,
                 itemBuilder: (context, index) {
-                  final imageUrl = widget.brochureImages[index];
+                  final imageUrl = widget.images[index];
                   return GestureDetector(
                     onTap: () {
                       showImagePreview(imageUrl);
@@ -228,25 +206,6 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 16),
-
-              // Download Progress Indicator
-              if (downloadProgress > 0 && downloadProgress < 1)
-                Column(
-                  children: [
-                    const Text(
-                      'Download in Progress...',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: downloadProgress,
-                      backgroundColor: Colors.grey[300],
-                      color: Colors.blue,
-                      minHeight: 8,
-                    ),
-                  ],
-                ),
             ],
           ),
         ),
@@ -254,31 +213,25 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
     );
   }
 
-  // Helper method to build detail columns
-  Widget _detailColumn(String title, dynamic value) {
+  Widget _detailSection(String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        const SizedBox(height: 4),
-        value is Widget
-            ? value
-            : Text(
-                value.toString(),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+        const SizedBox(height: 8),
+        Text(
+          content,
+          style: const TextStyle(
+            fontSize: 14,
+          ),
+        ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

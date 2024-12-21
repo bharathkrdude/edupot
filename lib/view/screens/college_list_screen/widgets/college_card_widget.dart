@@ -1,45 +1,48 @@
+import 'package:edupot/core/constants/constants.dart';
 import 'package:edupot/view/screens/college_list_screen/college_details_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:edupot/core/constants/constants.dart';
+import 'package:edupot/view/screens/college_list_screen/college_details_screen.dart';
+import 'package:flutter/material.dart';
 class CollegeCard extends StatelessWidget {
-  final String collegeName;
-  final String location;
-  final String coursesOffered;
-  final String examsAccepted;
-  final String placementRating;
-  final String imageUrl;
+  final String name;
+  final String university;
+  final String address;
+  final String about;
+  final String logo;
+  final String logoPath;
+  final List<String> images;
+  final String brochurePath;
 
   const CollegeCard({
     super.key,
-    required this.collegeName,
-    required this.location,
-    required this.coursesOffered,
-    required this.examsAccepted,
-    required this.placementRating,
-    required this.imageUrl,
+    required this.name,
+    required this.university,
+    required this.address,
+    required this.about,
+    required this.logo,
+    required this.logoPath,
+    required this.images,
+    required this.brochurePath,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String fullLogoUrl = '$logoPath$logo';
+    final List<String> fullImageUrls = images.map((img) => '$brochurePath$img').toList();
+
     return GestureDetector(
       onTap: () {
-        // Navigate to the details page
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CollegeDetailsScreen(
-              collegeName: collegeName,
-              location: location,
-              coursesOffered: coursesOffered,
-              examsAccepted: examsAccepted,
-              placementRating: placementRating,
-              imageUrl: imageUrl,
-              brochureImages: [
-                // Pass some example brochure images
-                'https://tse3.mm.bing.net/th?id=OIP.pkeiMEyzcxq0SIji4YR56gHaE8&pid=Api&P=0&h=180',
-                'https://lh5.googleusercontent.com/W3SkZszsQQkNJ7koq1qx_9EFU0Fq7LvLao-Z09xIoctb-Fppbmohl6h90oXbuQ5Y5H95289X2QF3r2OiDQhFHygAdjn1aSgSK3El3yx4BZ7jLXAZuEqe9sL4O9MF3bEec6tztINdWctpITwM4Xzn6s3idggpi_i2s77rHrDUzjf583hIV0WHOHHBwqkakw',
-                'https://www.creativefabrica.com/wp-content/uploads/2021/11/02/Education-Trifold-Brochure-Template-Graphics-19561648-1.jpg',
-              ],
+              name: name,
+              university: university,
+              address: address,
+              about: about,
+              logo: fullLogoUrl,
+              images: fullImageUrls,
             ),
           ),
         );
@@ -54,90 +57,49 @@ class CollegeCard extends StatelessWidget {
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // College Avatar and Name
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(imageUrl),
-                  radius: 25,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        collegeName,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        location,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            CircleAvatar(
+              backgroundImage: NetworkImage(fullLogoUrl),
+              radius: 25,
             ),
-            const SizedBox(height: 16),
-
-            // Courses Offered and Exams Accepted
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     _detailColumn('Courses Offered', coursesOffered),
-            //     _detailColumn('Exams Accepted', examsAccepted),
-            //   ],
-            // ),
-            // const SizedBox(height: 16),
-
-            // Placement Rating
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     _detailColumn(
-            //       'Placement Rating',
-            //       Row(
-            //         children: [
-            //           Icon(Icons.star, size: 16, color: Colors.amber),
-            //           const SizedBox(width: 4),
-            //           Text(
-            //             placementRating,
-            //             style: TextStyle(
-            //               fontSize: 14,
-            //               fontWeight: FontWeight.bold,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 20),
-
-            // Brochure Button
-           
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: TextStyles.headingCollege),
+                  const SizedBox(height: 4),
+                  Text(
+                    address,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    university,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[700],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+}
 
   // Helper method to build detail columns
   Widget _detailColumn(String title, dynamic value) {
@@ -161,4 +123,3 @@ class CollegeCard extends StatelessWidget {
       ],
     );
   }
-}
