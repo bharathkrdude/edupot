@@ -77,7 +77,6 @@ class TextStyles {
     color: Colors.grey,
   );
 
-  // Add hint text style with grey color
   static const TextStyle hintTextStyle2 = TextStyle(
     fontSize: 13.0,
     fontWeight: FontWeight.w800,
@@ -91,7 +90,7 @@ class TextStyles {
   static const TextStyle bodySmall = TextStyle(
     fontSize: 16.0,
     fontWeight: FontWeight.normal,
-    color: Colors.black, // Hint text color set to grey
+    color: Colors.black, 
   );
 }
 

@@ -18,6 +18,7 @@ class EnquiryFormViewModel {
   String? customStream;
   String? status;
   String? stage;
+  String? course;
   String? remark;
   final RxInt star = 0.obs; // Changed from rating to star
 
@@ -56,7 +57,7 @@ class EnquiryFormViewModel {
         stageItems.value = ['Call Back', 'FollowUp'];
         break;
       case 'Hot':
-        stageItems.value = ['Zoom', 'Physical Meeting', 'Closed', 'Not Interested'];
+        stageItems.value = ['Zoom Meeting', 'Physical Meeting', 'Closed', 'Not Interested'];
         break;
       case 'Cold':
         stageItems.value = ['DNP', 'RNR', 'Call Back'];
@@ -102,6 +103,7 @@ Future<void> submitForm(BuildContext context) async {
         customStream: stream == "Other" ? customStream : null,
         status: status!,
         stage: stage!,
+        course: course,
         remark: remark!,
         // star: star.value,
         createdAt: DateTime.now(),
@@ -162,6 +164,7 @@ Future<void> submitForm(BuildContext context) async {
     customStream = null;
     status = null;
     stage = null;
+    course = null;
     remark = null;
     star.value = 0;
     selectedStream.value = '';

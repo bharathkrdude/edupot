@@ -6,7 +6,7 @@ import 'package:edupot/view/widgets/search_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../viewmodels/college_viewmodel.dart'; // Add this import
+import '../../../viewmodels/college_viewmodel.dart';
 
 class CollegeListScreen extends StatefulWidget {
   const CollegeListScreen({super.key});
@@ -19,7 +19,6 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch colleges when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CollegeViewModel>().fetchColleges();
     });
@@ -36,7 +35,6 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
             padding: const EdgeInsets.all(16.0),
             child: SearchWidget(
               onChanged: (value) {
-                // Implement search using viewModel
                 context.read<CollegeViewModel>().searchColleges(value);
               },
             ),
@@ -55,14 +53,20 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          viewModel.error,
-                          textAlign: TextAlign.center,
-                        ),
+                       Container(
+                       height: 200,
+                        child: Image.asset('assets/images/Animation - 1738394294886.gif')),
+                       Text(viewModel.error),
                         const SizedBox(height: 16),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryButton,
+                          ),
                           onPressed: () => viewModel.fetchColleges(),
-                          child: const Text('Retry'),
+                          child: const Text(
+                            'Retry',
+                            style: TextStyle(color: white),
+                          ),
                         ),
                       ],
                     ),
@@ -82,15 +86,18 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     itemBuilder: (context, index) {
                       final college = viewModel.colleges[index];
                       return CollegeCard(
-      name: college.name,
-      university: college.university,
-      address: college.address,
-      about: college.about,
-      logo: college.logo,
-      logoPath: college.logoPath,
-      images: college.images.map((img) => img.image).toList(),
-      brochurePath: college.brochurePath,
-    );
+                        name: college.name,
+                        university: college.university,
+                        address: college.address,
+                        about: college.about,
+                        logo: college.logo,
+                        logoPath: college.logoPath,
+                        location: college.location,
+                        brochurerelated: college.brochurerelated,
+                        feesrelated: college.feesrelated,
+                        brochureImagePath: college.brochureImagePath,
+                        feesImagePath: college.feesImagePath,
+                      );
                     },
                   ),
                 );

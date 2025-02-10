@@ -1,25 +1,33 @@
+import 'dart:async';
 import 'package:edupot/data/repositories/lead_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:edupot/data/models/leads_model.dart';
 
 class StudentViewModel extends ChangeNotifier {
   final LeadProvider _leadProvider;
+  final _studentsController = StreamController<List<Lead>>.broadcast();
 
   List<Lead> _students = [];
-  List<Lead> _filteredStudents = []; // List to store filtered students
+  List<Lead> _filteredStudents = [];
   bool _isLoading = false;
   bool _hasMoreData = true;
   int _currentPage = 1;
+  int _perPage = 99; // Keep perPage constant (adjust based on API)
   int _totalPages = 1;
   int _totalStudents = 0;
   String _errorMessage = '';
 
+
+  String? _selectedStage;
+  String? _fromDate;
+  String? _toDate;
+
   StudentViewModel(this._leadProvider) {
     fetchStudents();
   }
-  // Getter for students (returns filtered list if search is active)
-  List<Lead> get students =>
-      _filteredStudents.isNotEmpty ? _filteredStudents : _students;
+
+  Stream<List<Lead>> get studentsStream => _studentsController.stream;
+  List<Lead> get students => _filteredStudents.isNotEmpty ? _filteredStudents : _students;
   bool get isLoading => _isLoading;
   bool get hasMoreData => _currentPage < _totalPages;
   String get errorMessage => _errorMessage;
@@ -27,48 +35,83 @@ class StudentViewModel extends ChangeNotifier {
   int get currentPage => _currentPage;
   int get totalPages => _totalPages;
 
-  // Fetch students from API
-  Future<void> fetchStudents() async {
-    if (_isLoading || !_hasMoreData) return;
+  
+Future<void> fetchStudents({bool isRefresh = false}) async {
+  if (_isLoading || (!_hasMoreData && !isRefresh)) return;
 
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final response = await _leadProvider.fetchLeads(
-        page: _currentPage,
-        perPage: 10,
-      );
-
-      final List<Lead> newStudents = response['leads'];
-      _totalStudents = response['total'];
-      _totalPages = response['last_page'];
-
-      if (_currentPage == 1) {
-        _students = newStudents;
-      } else {
-        _students.addAll(newStudents);
-      }
-
-      _currentPage++;
-      _errorMessage = '';
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-  // Refresh students (clear data and fetch again)
-  Future<void> refreshStudents() async {
-    _students.clear();
+  if (isRefresh) {
     _currentPage = 1;
     _hasMoreData = true;
-    _errorMessage = '';
-    notifyListeners();
-    await fetchStudents();
+    _students.clear();
   }
-// Search functionality
+
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    final response = await _leadProvider.fetchLeads(
+      page: _currentPage,
+      perPage: _perPage, 
+      stage: _selectedStage,
+      fromDate: _fromDate,
+      toDate: _toDate,
+    );
+
+    final List<Lead> newStudents = response['leads'];
+    final int totalRecords = response['total']; // API must provide total records
+
+    if (isRefresh) {
+      _students = newStudents;
+    } else {
+      _students.addAll(newStudents);
+    }
+
+    // Pagination check: If we received less than requested, no more data
+    _hasMoreData = newStudents.length >= 20;
+    
+    // Update currentPage only if new data is available
+    if (_hasMoreData) {
+      _currentPage++;
+    }
+
+    _studentsController.add(_students);
+    _errorMessage = '';
+  } catch (e) {
+    _errorMessage = e.toString();
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
+  // Fetch more students when scrolling
+  Future<void> fetchMoreStudents() async {
+    if (!_isLoading && _hasMoreData) {
+      await fetchStudents();
+    }
+  }
+
+  // Refresh students list
+  Future<void> refreshStudents() async {
+    await fetchStudents(isRefresh: true);
+  }
+
+  // Apply filters and refetch data
+  void applyFilters({String? stage, String? fromDate, String? toDate}) {
+    _selectedStage = stage;
+    _fromDate = fromDate;
+    _toDate = toDate;
+    refreshStudents();
+  }
+void resetFilters() {
+  _selectedStage = null;
+  _fromDate = null;
+  _toDate = null;
+  fetchStudents(isRefresh: true); 
+  notifyListeners();
+}
+
+  
   void searchStudents(String query) {
     if (query.isEmpty) {
       _filteredStudents = [];
@@ -78,6 +121,13 @@ class StudentViewModel extends ChangeNotifier {
               student.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
+    _studentsController.add(_filteredStudents);
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _studentsController.close();
+    super.dispose();
   }
 }

@@ -1,18 +1,20 @@
 import 'package:edupot/core/constants/constants.dart';
+import 'package:edupot/data/models/college_model.dart';
 import 'package:edupot/view/screens/college_list_screen/college_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:edupot/core/constants/constants.dart';
-import 'package:edupot/view/screens/college_list_screen/college_details_screen.dart';
-import 'package:flutter/material.dart';
+
 class CollegeCard extends StatelessWidget {
   final String name;
   final String university;
   final String address;
   final String about;
-  final String logo;
+  final String? logo;
   final String logoPath;
-  final List<String> images;
-  final String brochurePath;
+  final String location;
+  final List<BrochureImage> brochurerelated;
+  final List<FeesImage> feesrelated;
+  final String brochureImagePath;
+  final String feesImagePath;
 
   const CollegeCard({
     super.key,
@@ -20,16 +22,18 @@ class CollegeCard extends StatelessWidget {
     required this.university,
     required this.address,
     required this.about,
-    required this.logo,
+    this.logo,
     required this.logoPath,
-    required this.images,
-    required this.brochurePath,
+    required this.location,
+    required this.brochurerelated,
+    required this.feesrelated,
+    required this.brochureImagePath,
+    required this.feesImagePath,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String fullLogoUrl = '$logoPath$logo';
-    final List<String> fullImageUrls = images.map((img) => '$brochurePath$img').toList();
+    final String? fullLogoUrl = logo != null ? '$logoPath$logo' : null;
 
     return GestureDetector(
       onTap: () {
@@ -41,8 +45,12 @@ class CollegeCard extends StatelessWidget {
               university: university,
               address: address,
               about: about,
-              logo: fullLogoUrl,
-              images: fullImageUrls,
+              logo: fullLogoUrl ?? "",
+            location: location,
+              brochurerelated: brochurerelated,
+              feesrelated: feesrelated,
+              brochureImagePath: brochureImagePath,
+              feesImagePath: feesImagePath,
             ),
           ),
         );
@@ -65,8 +73,13 @@ class CollegeCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(fullLogoUrl),
+              backgroundImage: fullLogoUrl != null 
+                ? NetworkImage(fullLogoUrl)
+                : null,
               radius: 25,
+              child: fullLogoUrl == null 
+                ? const Icon(Icons.school)
+                : null,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -83,13 +96,40 @@ class CollegeCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    university,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[700],
-                      fontStyle: FontStyle.italic,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          university,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: location == 'India' 
+                            ? Colors.blue[100] 
+                            : Colors.green[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          location,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: location == 'India' 
+                              ? Colors.blue[800] 
+                              : Colors.green[800],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -100,26 +140,3 @@ class CollegeCard extends StatelessWidget {
     );
   }
 }
-
-  // Helper method to build detail columns
-  Widget _detailColumn(String title, dynamic value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        ),
-        const SizedBox(height: 4),
-        value is Widget
-            ? value
-            : Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-      ],
-    );
-  }

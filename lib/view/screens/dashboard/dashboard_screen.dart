@@ -1,59 +1,160 @@
 import 'package:edupot/core/constants/constants.dart';
+import 'package:edupot/view/widgets/carousel_widget.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
+import 'package:edupot/viewmodels/dash_board_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DashboardViewModel>().fetchDashboardData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.parse("2024-12-17 16:19:17");
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: CustomAppBar(title: 'Dashboard'),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _statsSection(constraints),
-                    const SizedBox(height: 20),
-                    _pieChartSection(constraints),
-                    const SizedBox(height: 20),
-                    _progressSection(),
-                  ],
-                ),
+      body: Consumer<DashboardViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (viewModel.error.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(viewModel.error),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: viewModel.refreshDashboard,
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
             );
-          },
-        ),
+          }
+
+          return SafeArea(
+            child: RefreshIndicator(
+              onRefresh: viewModel.refreshDashboard,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _statsSection(constraints, viewModel),
+                          kHeight20,
+                          if (viewModel.bannerImages.isNotEmpty)
+                            CarouselWithDots(
+                              images: viewModel.bannerImages,
+                              height: 250,
+                            )
+                          else
+                            Container(
+                              height: 250,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Text('No banner images available'),
+                              ),
+                            ),
+                          const SizedBox(height: 20),
+                          _pieChartSection(constraints, viewModel),
+                          const SizedBox(height: 20),
+                          _progressSection(viewModel),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _statsSection(BoxConstraints constraints) {
+  Widget _statsSection(BoxConstraints constraints, DashboardViewModel viewModel) {
     return SizedBox(
       height: constraints.maxWidth * 0.35,
       child: ListView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         children: [
-          _statCard('Total Enquiries', '250', Icons.people_outline, Colors.blue.shade100, constraints),
-          _statCard('Science Stream', '120', Icons.science_outlined, Colors.green.shade100, constraints),
-          _statCard('Commerce', '80', Icons.business_outlined, Colors.orange.shade100, constraints),
-          _statCard('Humanities', '50', Icons.menu_book_outlined, Colors.purple.shade100, constraints),
+          _statCard(
+            'Total Leads',
+            viewModel.totalLeads.toString(),
+            Icons.people_outline,
+            Colors.blue.shade100,
+            constraints,
+          ),
+          ...viewModel.categories.map((category) => _statCard(
+                category,
+                viewModel.getLeadsCountForCategory(category).toString(),
+                _getCategoryIcon(category),
+                _getCategoryLightColor(category),
+                constraints,
+              )),
         ],
       ),
     );
   }
 
-  Widget _statCard(String title, String value, IconData icon, Color color, BoxConstraints constraints) {
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'commerce':
+        return Icons.business_outlined;
+      case 'science':
+        return Icons.science_outlined;
+      case 'others':
+        return Icons.menu_book_outlined;
+      default:
+        return Icons.school_outlined;
+    }
+  }
+
+  Color _getCategoryLightColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'commerce':
+        return Colors.blue.shade100;
+      case 'science':
+        return Colors.green.shade100;
+      case 'others':
+        return Colors.orange.shade100;
+      default:
+        return Colors.grey.shade100;
+    }
+  }
+
+  Widget _statCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    BoxConstraints constraints,
+  ) {
     return Container(
       width: constraints.maxWidth * 0.4,
       margin: const EdgeInsets.only(right: 15),
@@ -106,9 +207,35 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-Widget _pieChartSection(BoxConstraints constraints) {
+
+  Widget _pieChartSection(BoxConstraints constraints, DashboardViewModel viewModel) {
+    bool hasData = viewModel.totalLeads > 0;
+    final sections = hasData
+        ? viewModel.categories.map((category) {
+            final percentage = viewModel.getCategoryPercentage(category);
+            return PieChartSectionData(
+              value: percentage > 0 ? percentage : 0,
+              title: percentage > 0 ? '${percentage.toStringAsFixed(1)}%' : '',
+              color: viewModel.getCategoryColor(category),
+              radius: 60,
+              titleStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            );
+          }).toList()
+        : [
+            PieChartSectionData(
+              value: 100,
+              title: '0%',
+              color: Colors.grey.shade300,
+              radius: 60,
+            ),
+          ];
+
     return Container(
-      height: constraints.maxWidth * 0.6, // Reduced from 0.9 to 0.6
+      height: constraints.maxWidth * 0.6,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -125,7 +252,7 @@ Widget _pieChartSection(BoxConstraints constraints) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Stream-wise Distribution',
+            'Category Distribution',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -137,61 +264,45 @@ Widget _pieChartSection(BoxConstraints constraints) {
               children: [
                 kWidth10,
                 Expanded(
-                  flex: 2, // Reduced from 3 to 2
-                  child: PieChart(
-                    PieChartData(
-                      sectionsSpace: 0,
-                      centerSpaceRadius: 30, // Reduced from 40 to 30
-                      sections: [
-                        PieChartSectionData(
-                          value: 48,
-                          title: '48%',
-                          color: Colors.blue,
-                          radius: 60, // Reduced from 100 to 60
-                          titleStyle: const TextStyle(
-                            color: Colors.white,
+                  flex: 2,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      PieChart(
+                        PieChartData(
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 30,
+                          sections: sections,
+                        ),
+                      ),
+                      if (!hasData)
+                        const Text(
+                          'No Data',
+                          style: TextStyle(
+                            color: Colors.grey,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12, // Added font size
                           ),
                         ),
-                        PieChartSectionData(
-                          value: 32,
-                          title: '32%',
-                          color: Colors.green,
-                          radius: 60, // Reduced from 100 to 60
-                          titleStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12, // Added font size
-                          ),
-                        ),
-                        PieChartSectionData(
-                          value: 20,
-                          title: '20%',
-                          color: Colors.orange,
-                          radius: 60, // Reduced from 100 to 60
-                          titleStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12, // Added font size
-                          ),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-                kWidth20, // Changed from kWidth30 to kWidth20
+                kWidth20,
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _legendItem('Science', Colors.blue),
-                      const SizedBox(height: 10),
-                      _legendItem('Commerce', Colors.green),
-                      const SizedBox(height: 10),
-                      _legendItem('Humanities', Colors.orange),
-                    ],
+                    children: viewModel.categories.map((category) {
+                      final count = viewModel.getLeadsCountForCategory(category);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: _legendItem(
+                          '$category ($count)',
+                          hasData
+                              ? viewModel.getCategoryColor(category)
+                              : Colors.grey.shade300,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
                 kWidth10,
@@ -215,12 +326,18 @@ Widget _pieChartSection(BoxConstraints constraints) {
           ),
         ),
         const SizedBox(width: 8),
-        Text(title),
+        Expanded(
+          child: Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _progressSection() {
+  Widget _progressSection(DashboardViewModel viewModel) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -238,18 +355,41 @@ Widget _pieChartSection(BoxConstraints constraints) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Admission Progress',
+            'Category Progress',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 20),
-          _progressItem('Science Stream Seats', '150', '120', 0.80, Colors.blue),
-          const SizedBox(height: 15),
-          _progressItem('Commerce Stream Seats', '100', '80', 0.80, Colors.green),
-          const SizedBox(height: 15),
-          _progressItem('Humanities Stream Seats', '75', '50', 0.67, Colors.orange),
+          if (viewModel.totalLeads == 0)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'No leads data available',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            )
+          else
+            ...viewModel.categories.map((category) {
+              final count = viewModel.getLeadsCountForCategory(category);
+              final percentage = viewModel.getCategoryPercentage(category);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: _progressItem(
+                  '$category Category',
+                  viewModel.totalLeads.toString(),
+                  count.toString(),
+                  percentage / 100,
+                  viewModel.getCategoryColor(category),
+                ),
+              );
+            }),
         ],
       ),
     );
@@ -274,12 +414,12 @@ Widget _pieChartSection(BoxConstraints constraints) {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Text('$filled/$total seats'),
+            Text('$filled/$total leads'),
           ],
         ),
         const SizedBox(height: 8),
         LinearProgressIndicator(
-          value: progress,
+          value: progress.isNaN || progress.isInfinite ? 0 : progress,
           backgroundColor: color.withOpacity(0.2),
           valueColor: AlwaysStoppedAnimation<Color>(color),
           minHeight: 8,

@@ -8,15 +8,23 @@ import 'package:flutter/material.dart';
 
 class StudentDetailsScreen extends StatelessWidget {
   final Lead student;
-   final VoidCallback? onContact;
+  final VoidCallback? onContact;
 
-  const StudentDetailsScreen({super.key, required this.student, this.onContact});
+  const StudentDetailsScreen(
+      {super.key, required this.student, this.onContact});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: CustomAppBar(title: 'Student Details',leading: IconButton(onPressed: (){Navigator.pop(context);}, icon:Icon(Icons.arrow_back_ios_new)),),
+      appBar: CustomAppBar(
+        title: 'Student Details',
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios_new)),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -29,12 +37,14 @@ class StudentDetailsScreen extends StatelessWidget {
               SizedBox(height: 20),
               AcademicInformationSection(student: student),
               SizedBox(height: 20),
-              PrimaryButton(onPressed: onContact ?? () {
-                      // Default action for contact (e.g., call or message)
-                      if (kDebugMode) {
-                        print('Contacting ');
-                      }
-                    }, text: 'Contact')
+              PrimaryButton(
+                  onPressed: onContact ??
+                      () {
+                        if (kDebugMode) {
+                          print('Contacting ');
+                        }
+                      },
+                  text: 'Contact')
             ],
           ),
         ),
@@ -51,7 +61,7 @@ class StudentNameHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(12),
@@ -59,7 +69,7 @@ class StudentNameHeader extends StatelessWidget {
       child: Center(
         child: Text(
           student.name.toUpperCase(),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -78,7 +88,7 @@ class ContactInformationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationSection(
-      onPressed: () => _editContactFields(context), // Define what happens on edit
+      onPressed: () => (){},
       title: 'Contact Information',
       icon: Icons.contact_mail_outlined,
       children: [
@@ -102,6 +112,10 @@ class ContactInformationSection extends StatelessWidget {
           title: 'Parent Phone',
           subtitle: student.parentPhone,
         ),
+        InformationTile(
+            icon: Icons.phone_outlined,
+            title: 'Course',
+            subtitle: student.course ?? '-'),
       ],
     );
   }
@@ -115,7 +129,8 @@ class AcademicInformationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InformationSection(
-      onPressed: () => _editAcademicFields(context), // Define what happens on edit
+      onPressed: () =>
+          _editAcademicFields(context,student), // Define what happens on edit
       title: 'Academic Information',
       icon: Icons.school_outlined,
       children: [
@@ -137,12 +152,12 @@ class AcademicInformationSection extends StatelessWidget {
         InformationTile(
           icon: Icons.note_outlined,
           title: 'Remark',
-          subtitle: student.remark,
+          subtitle: student.remark ?? '-',
         ),
         InformationTile(
           icon: Icons.priority_high_outlined,
-          title: 'Priority',
-          subtitle: student.priority.toString(),
+          title: 'course',
+          subtitle: student.course?.toString() ?? '-',
         ),
       ],
     );
@@ -257,61 +272,62 @@ class InformationTile extends StatelessWidget {
   }
 }
 
-void _editContactFields(BuildContext context) {
-  // Implement the logic to edit all fields in the section
-  // This could open a dialog where all fields can be edited
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: backgroundColorlightgrey,
-        title: const Text('Edit Contact Information'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomTextField(
-                label: 'Address', icon: Icons.mail, onSaved: (Value) {}),
-            CustomTextField(
-                label: 'Phone', icon: Icons.call, onSaved: (Value) {}),
-            CustomTextField(
-                label: 'Parent Name',
-                icon: Icons.person_2_outlined,
-                onSaved: (Value) {}),
-            CustomTextField(
-                label: 'Parent Phone', icon: Icons.phone, onSaved: (Value) {})
-            // Add fields for editing here
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                iconColor: white, backgroundColor: primaryButton),
-            onPressed: () {
-              // Save all changes
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: white,
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+// void _editContactFields(BuildContext context) {
+//   // Implement the logic to edit all fields in the section
+//   // This could open a dialog where all fields can be edited
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         backgroundColor: backgroundColorlightgrey,
+//         title: const Text('Edit Contact Information'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             CustomTextField(
+//                 label: 'Address', icon: Icons.mail, onSaved: (Value) {}, controller: null,),
+//             CustomTextField(
+//                 label: 'Phone', icon: Icons.call, onSaved: (Value) {}),
+//             CustomTextField(
+//                 label: 'Parent Name',
+//                 icon: Icons.person_2_outlined,
+//                 onSaved: (Value) {}),
+//             CustomTextField(
+//                 label: 'Parent Phone', icon: Icons.phone, onSaved: (Value) {})
+//             // Add fields for editing here
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: const Text('Cancel'),
+//           ),
+//           ElevatedButton(
+//             style: ElevatedButton.styleFrom(
+//                 iconColor: white, backgroundColor: primaryButton),
+//             onPressed: () {
+//               // Save all changes
+//               Navigator.pop(context);
+//             },
+//             child: const Text(
+//               'Save',
+//               style: TextStyle(
+//                 color: white,
+//               ),
+//             ),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
+void _editAcademicFields(BuildContext context, Lead student) {
+  TextEditingController streamController = TextEditingController(text: student.stream);
+  TextEditingController statusController = TextEditingController(text: student.status);
+  TextEditingController stageController = TextEditingController(text: student.stage);
+  TextEditingController remarkController = TextEditingController(text: student.remark ?? '');
+  TextEditingController courseController = TextEditingController(text: student.course ?? '');
 
-
-
-void _editAcademicFields(BuildContext context) {
-  // Implement the logic to edit all fields in the section
-  // This could open a dialog where all fields can be edited
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -322,16 +338,35 @@ void _editAcademicFields(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: [
             CustomTextField(
-                label: 'Stream', icon: Icons.straighten_sharp, onSaved: (Value) {}),
+              label: 'Stream',
+              icon: Icons.straighten_sharp,
+              controller: streamController,
+              onSaved: (value) => student.stream = value ?? '',
+            ),
             CustomTextField(
-                label: 'Status', icon: Icons.star_border, onSaved: (Value) {}),
+              label: 'Status',
+              icon: Icons.star_border,
+              controller: statusController,
+              onSaved: (value) => student.status = value ?? '',
+            ),
             CustomTextField(
-                label: 'Stage',
-                icon: Icons.person_2_outlined,
-                onSaved: (Value) {}),
+              label: 'Stage',
+              icon: Icons.person_2_outlined,
+              controller: stageController,
+              onSaved: (value) => student.stage = value ?? '',
+            ),
             CustomTextField(
-                label: 'Remark', icon: Icons.assignment_outlined, onSaved: (Value) {})
-            // Add fields for editing here
+              label: 'Remark',
+              icon: Icons.assignment_outlined,
+              controller: remarkController,
+              onSaved: (value) => student.remark = value ?? '',
+            ),
+            CustomTextField(
+              label: 'Course',
+              icon: Icons.school_outlined,
+              controller: courseController,
+              onSaved: (value) => student.course = value,
+            ),
           ],
         ),
         actions: [
@@ -343,7 +378,13 @@ void _editAcademicFields(BuildContext context) {
             style: ElevatedButton.styleFrom(
                 iconColor: white, backgroundColor: primaryButton),
             onPressed: () {
-              // Save all changes
+              // ✅ Save changes (now updates the mutable object)
+              student.stream = streamController.text;
+              student.status = statusController.text;
+              student.stage = stageController.text;
+              student.remark = remarkController.text;
+              student.course = courseController.text;
+
               Navigator.pop(context);
             },
             child: const Text(

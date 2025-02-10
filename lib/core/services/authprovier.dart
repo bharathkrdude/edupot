@@ -1,4 +1,3 @@
-// auth_provider.dart
 import 'package:edupot/core/constants/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +12,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _token != null;
 
   AuthProvider() {
-    _dio.options.baseUrl = ApiConstants.baseUrl; // Use ApiConstants
+    _dio.options.baseUrl = ApiConstants.baseUrl; 
     _initializeToken();
   }
 
@@ -55,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
       });
 
       if (response.statusCode == 200) {
-        _token = response.data['token']; // Ensure this matches your API response
+        _token = response.data['token']; 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', _token!);
         _setupAuthInterceptor();

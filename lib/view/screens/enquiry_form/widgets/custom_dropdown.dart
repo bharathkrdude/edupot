@@ -20,7 +20,6 @@ class CustomDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure value exists in items list
     final currentValue = items.contains(value) ? value : null;
 
     return Padding(
@@ -38,6 +37,7 @@ class CustomDropdownField extends StatelessWidget {
           ),
           SizedBox(height: 8),
           DropdownButtonFormField<String>(
+           dropdownColor: Colors.white,
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: Colors.blue),
               border: OutlineInputBorder(

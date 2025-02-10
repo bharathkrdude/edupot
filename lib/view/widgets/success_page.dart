@@ -1,5 +1,6 @@
 import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
+import 'package:edupot/viewmodels/students_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -32,21 +33,17 @@ class _SuccessPageState extends State<SuccessPage> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          // Added to prevent overflow
           child: Padding(
-            // Added padding
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40), // Added top spacing
-                // Success Animation with working URL
+                const SizedBox(height: 40), 
                 Lottie.network(
                   'https://assets1.lottiefiles.com/packages/lf20_uu0x8lqv.json',
                   height: 200,
                   repeat: false,
                   onLoaded: (composition) {
-                    // Optional: Handle loading completion
                   },
                   errorBuilder: (context, error, stackTrace) {
                     return Icon(
@@ -57,7 +54,6 @@ class _SuccessPageState extends State<SuccessPage> {
                   },
                 ),
 
-                // Success Message
                 AnimatedOpacity(
                   opacity: _isAnimationComplete ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 500),
@@ -86,7 +82,6 @@ class _SuccessPageState extends State<SuccessPage> {
 
                 const SizedBox(height: 100),
 
-                // Back Button
                 AnimatedOpacity(
                   opacity: _isAnimationComplete ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 500),
@@ -95,6 +90,7 @@ class _SuccessPageState extends State<SuccessPage> {
                       child: PrimaryButton(
                         text: "back to home",
                         onPressed: () {
+                          
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => CustomBottomNavigation(),
@@ -102,7 +98,7 @@ class _SuccessPageState extends State<SuccessPage> {
                         },
                       )),
                 ),
-                const SizedBox(height: 20), // Added bottom spacing
+                const SizedBox(height: 20), 
               ],
             ),
           ),

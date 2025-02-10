@@ -22,7 +22,7 @@ class EnquiryFormController extends GetxController {
         stageItems.value = ['Call Back', 'FollowUp'].toSet().toList();
         break;
       case 'Hot':
-        stageItems.value = ['Zoom', 'Physical Meeting', 'Closed', 'Not Interested'].toSet().toList();
+        stageItems.value = ['Zoom Meeting', 'Physical Meeting', 'Closed', 'Not Interested'].toSet().toList();
         break;
       case 'Cold':
         stageItems.value = ['DNP', 'RNR', 'Call Back'].toSet().toList();

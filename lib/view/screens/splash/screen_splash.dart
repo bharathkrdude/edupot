@@ -33,7 +33,6 @@ class SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Check for token and navigate accordingly
     _checkTokenAndNavigate();
   }
 
@@ -53,7 +52,7 @@ class SplashScreenState extends State<SplashScreen>
         print("No token found, navigating to OnboardingScreen");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => OnboardingScreen(),
+            builder: (context) => const OnboardingScreen(),
           ),
         );
       }

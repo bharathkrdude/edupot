@@ -39,8 +39,8 @@ dependencies:
   get: ^4.6.6
   google_fonts: ^6.2.1
   http: ^1.2.2
+  intl: ^0.20.2
   lottie: ^2.0.0
-  media_scanner: ^2.1.0
   permission_handler: ^11.3.1
   provider: ^6.1.2
   shared_preferences: ">=2.0.0 <2.3.0"

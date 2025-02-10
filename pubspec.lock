@@ -232,6 +232,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -288,14 +296,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
-  media_scanner:
-    dependency: "direct main"
-    description:
-      name: media_scanner
-      sha256: "745e8b0c05d7c1d9040cc5bbb5508bd7fb1b6a36125d360537f1dd92d26bd050"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   meta:
     dependency: transitive
     description:

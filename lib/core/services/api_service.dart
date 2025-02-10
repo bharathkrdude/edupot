@@ -1,18 +1,19 @@
-
-
 import 'package:dio/dio.dart';
 import 'package:edupot/data/models/leads_model.dart';
 import 'package:edupot/data/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-///the working service 
+
 class ApiService {
   final Dio _dio = Dio();
- 
-  static const String baseUrl = 'https://esmagroup.online/edupot/api/v1';
-  // Original fetchLeads method (keep this for backward compatibility if needed)
+
+  static const String baseUrl = 'https://edupotstudy.com/api/v1';
   Future<Map<String, dynamic>> fetchLeads({
     int page = 1,
-    int perPage = 10,
+    int perPage = 20,
+    String? stage,
+    String? fromDate,
+    String? toDate,
+    
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -22,8 +23,8 @@ class ApiService {
         throw Exception('Token not found');
       }
 
-      final response = await _dio.get(
-        'https://esmagroup.online/edupot/api/v1/paginate',
+      final response = await _dio.post(
+        'https://edupotstudy.com/api/v1/leads-multi',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -32,11 +33,14 @@ class ApiService {
         queryParameters: {
           'page': page,
           'per_page': perPage,
+          'stage': stage,
+          'from_date': fromDate,
+          'to_date': toDate,
+          
         },
       );
 
       if (response.statusCode == 200) {
-        // Return the complete response data
         return {
           'leads': (response.data['leads'] as List)
               .map((lead) => Lead.fromJson(lead))
@@ -52,7 +56,6 @@ class ApiService {
       throw Exception('Failed to load leads: $e');
     }
   }
-  // post
 
   Future<bool> addLead(Lead lead) async {
     try {
@@ -64,7 +67,7 @@ class ApiService {
       }
 
       final response = await _dio.post(
-        'https://esmagroup.online/edupot/api/v1/leads-store',
+        'https://edupotstudy.com/api/v1/leads-store',
         data: lead.toJson(),
         options: Options(
           headers: {
@@ -81,53 +84,54 @@ class ApiService {
     }
   }
 
+ Future<Map<String, dynamic>> fetchColleges() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-  // Add new method for fetching colleges
-  Future<Map<String, dynamic>> fetchColleges() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      final response = await _dio.get(
-        'https://esmagroup.online/edupot/api/v1/college-list',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['status'] == true) {
-          return {
-            'colleges': data['colleges'],
-            'logopath': data['logopath'],
-            'brochurepath': data['brochurepath'],
-          };
-        } else {
-          throw Exception(data['message'] ?? 'Failed to load colleges');
-        }
-      } else {
-        throw Exception('Failed to load colleges: ${response.statusCode}');
-      }
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        throw Exception('Unauthorized. Please login again.');
-      }
-      throw Exception('Network error: ${e.message}');
-    } catch (e) {
-      throw Exception('Error fetching colleges: $e');
+    if (token == null) {
+      throw Exception('Token not found');
     }
-  }
 
-//auth
-Future<UserModel> sendForgotPasswordEmail(String email) async {
+    final response = await _dio.get(
+      'https://edupotstudy.com/api/v1/college-list',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      if (data['status'] == true) {
+        return {
+          'status': data['status'],
+          'message': data['message'],
+          'colleges': data['colleges'],
+          'logopath': data['logopath'],
+          'brochureimagepath': data['brochureimagepath'],
+          'feesimagepath': data['feesimagepath'],
+        };
+      } else {
+        throw Exception(data['message'] ?? 'Failed to load colleges');
+      }
+    } else {
+      throw Exception('Failed to load colleges: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 401) {
+      throw Exception('Unauthorized. Please login again.');
+    }
+    throw Exception('Network error: ${e.message}');
+  } catch (e) {
+    throw Exception('Error fetching colleges: $e');
+  }
+}
+
+
+  Future<UserModel> sendForgotPasswordEmail(String email) async {
     try {
       final response = await _dio.post(
         '$baseUrl/mail-id',
@@ -151,6 +155,7 @@ Future<UserModel> sendForgotPasswordEmail(String email) async {
       throw Exception('Error sending OTP: $e');
     }
   }
+
   Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
     try {
       final response = await _dio.post(
@@ -171,7 +176,7 @@ Future<UserModel> sendForgotPasswordEmail(String email) async {
         if (data['status'] == true) {
           return {
             'user': UserModel.fromJson(data['user']),
-            'token': data['token'], // This token will be used for password update
+            'token': data['token'],
           };
         }
         throw Exception(data['message'] ?? 'Failed to verify OTP');
@@ -182,7 +187,8 @@ Future<UserModel> sendForgotPasswordEmail(String email) async {
     }
   }
 
-  Future<bool> updatePassword(String token, String password, String confirmPassword) async {
+  Future<bool> updatePassword(
+      String token, String password, String confirmPassword) async {
     try {
       final response = await _dio.post(
         '$baseUrl/update-password',
@@ -192,7 +198,7 @@ Future<UserModel> sendForgotPasswordEmail(String email) async {
         },
         options: Options(
           headers: {
-            'Authorization': 'Bearer $token', // Use token from OTP verification
+            'Authorization': 'Bearer $token',
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
@@ -215,6 +221,39 @@ Future<UserModel> sendForgotPasswordEmail(String email) async {
       throw Exception('Error updating password: ${e.message}');
     } catch (e) {
       throw Exception('Error updating password: $e');
+    }
+  }
+ 
+  Future<Map<String, dynamic>> fetchDashboard() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      final response = await _dio.get(
+        '$baseUrl/dashboard',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        if (response.data is Map<String, dynamic>) {
+          return response.data;
+        } else {
+          throw Exception('Invalid response format');
+        }
+      } else {
+        throw Exception('Failed to load dashboard data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching dashboard data: $e');
     }
   }
 }

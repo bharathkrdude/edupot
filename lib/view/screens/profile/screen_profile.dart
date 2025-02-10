@@ -3,12 +3,25 @@ import 'package:edupot/view/screens/authentication/login.dart';
 import 'package:edupot/view/screens/profile/change_password_screen.dart';
 import 'package:edupot/view/screens/profile/edit_profile.dart';
 import 'package:edupot/view/widgets/custom_appbar.dart';
+import 'package:edupot/viewmodels/staff_profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<StaffProfileProvider>(context, listen: false).fetchProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,72 +33,79 @@ class ProfileScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen()),
               );
             },
-            icon: Icon(Icons.edit, color: Colors.white),
+            icon: const Icon(Icons.edit, color: Colors.white),
           )
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Profile Image and Info
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                      'https://publichealth.uga.edu/wp-content/uploads/2020/01/Thomas-Cameron_Student_Profile.jpg'),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Alwin Jhonny',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '8087935135',
-                  style: TextStyle(
-                      color: Colors.black.withOpacity(0.7), fontSize: 16),
-                ),
-                Text(
-                  'alwinjhonny@gmail.com',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Consumer<StaffProfileProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                SizedBox(height: 24),
+                if (provider.staffProfile == null) {
+                  return const Center(child: Text("Failed to load profile."));
+                }
 
-                // Info Cards
-
-                SizedBox(height: 32),
-
-                MenuItem(
-                  icon: Icons.lock_reset_rounded,
-                  color: Colors.blue.shade100,
-                  title: 'Change Password',
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChangePassWordScreen()));
-                  },
-                ),
-              
-                MenuItem(
-                  icon: Icons.logout,
-                  color: Colors.red.shade100,
-                  title: 'Logout',
-                  onTap: () {
-                    // Access the AuthProvider and perform logout
-              context.read<AuthProvider>().logout();
-              // Navigate to LoginScreen using Get
-              Get.offAll(() => LoginScreen());
-                  },
-                ),
-              ],
+                final staff = provider.staffProfile!;
+                print('imagePath: ${staff.imagePath}');
+                print('image: ${staff.image}');
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          NetworkImage(staff.imagePath + staff.image),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      staff.name,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      staff.phone,
+                      style: TextStyle(
+                          color: Colors.black.withOpacity(0.7), fontSize: 16),
+                    ),
+                    Text(
+                      staff.email,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                    const SizedBox(height: 24),
+                    MenuItem(
+                      icon: Icons.lock_reset_rounded,
+                      color: Colors.blue.shade100,
+                      title: 'Change Password',
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChangePassWordScreen(),
+                        ));
+                      },
+                    ),
+                    MenuItem(
+                      icon: Icons.logout,
+                      color: Colors.red.shade100,
+                      title: 'Logout',
+                      onTap: () {
+                        context.read<AuthProvider>().logout();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ));
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -99,12 +119,16 @@ class InfoCard extends StatelessWidget {
   final String value;
   final Color color;
 
-   const InfoCard({super.key, required this.title, required this.value, required this.color});
+  const InfoCard(
+      {super.key,
+      required this.title,
+      required this.value,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
@@ -115,7 +139,7 @@ class InfoCard extends StatelessWidget {
             title,
             style: TextStyle(color: Colors.white, fontSize: 14),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
@@ -137,7 +161,8 @@ class MenuItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const MenuItem(
-      {super.key, required this.icon,
+      {super.key,
+      required this.icon,
       required this.color,
       required this.title,
       required this.onTap});
@@ -146,7 +171,7 @@ class MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(8),
@@ -154,7 +179,7 @@ class MenuItem extends StatelessWidget {
         child: Icon(icon, color: Colors.black87),
       ),
       title: Text(title),
-      trailing: Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
   }

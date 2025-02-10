@@ -1,24 +1,24 @@
 class Lead {
-  final int id;
-  final String name;
-  final String address;
-  final String phone;
-  final String? email;
-  final String parentName;
-  final String parentPhone;
-  final int? ownerId;
-  final String stream;
-  final String? customStream;
-  final String status;
-  final String stage;
-  final String remark;
-  final int? priority;
+   int id;
+   String name;
+   String address;
+   String phone;
+   String? email;
+   String parentName;
+   String parentPhone;
+   int? ownerId;
+   String stream;
+  String? customStream;
+   String status;
+   String stage;
+   String remark;
+   String? course;
   
-  final DateTime createdAt;
-  final int? createdBy;
-  final DateTime updatedAt;
-  final int? updatedBy;
-  final DateTime? deletedAt;
+   DateTime createdAt;
+   int? createdBy;
+   DateTime updatedAt;
+  int? updatedBy;
+   DateTime? deletedAt;
 
   Lead({
     required this.id,
@@ -34,7 +34,7 @@ class Lead {
     required this.status,
     required this.stage,
     required this.remark,
-    this.priority,
+    this.course,
     
     required this.createdAt,
     this.createdBy,
@@ -58,7 +58,7 @@ class Lead {
       status: json['status'],
       stage: json['stage'],
       remark: json['remark'],
-      priority: json['priority'],
+      course: json['course'],
      
       createdAt: DateTime.parse(json['created_at']),
       createdBy: json['created_by'],
@@ -79,6 +79,7 @@ class Lead {
       'stream': stream,
       'status': status,
       'stage': stage,
+      'course': course,
       'remark': remark,
      
     };
@@ -87,7 +88,6 @@ class Lead {
       data['custom_stream'] = customStream;
     }
 
-    // Remove null values
     data.removeWhere((key, value) => value == null);
 
     return data;

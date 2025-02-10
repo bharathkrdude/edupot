@@ -20,7 +20,9 @@ class EnquiryForm extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         // Handle back button press
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => CustomBottomNavigation(),
+        ));
         return false;
       },
       child: Scaffold(
@@ -102,6 +104,14 @@ class EnquiryForm extends StatelessWidget {
                       onSaved: (value) => viewModel.parentPhone = value,
                       validator: (value) =>
                           value == null || value.isEmpty ? 'Required' : null,
+                    ),
+                    CustomTextField(
+                      label: 'Course',
+                      icon: Icons.book_outlined,
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Required' : null,
+                      onSaved: (value) => viewModel.course =
+                          value, // Fixed: Changed from parentName to remark
                     ),
                     CustomTextField(
                       label: 'Remark',

@@ -68,7 +68,7 @@ class EditProfileScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 60,
                           backgroundImage: NetworkImage(
-                              'https://publichealth.uga.edu/wp-content/uploads/2020/01/Thomas-Cameron_Student_Profile.jpg'),
+                              ''),
                         ),
                       ),
                       Positioned(
