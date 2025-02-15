@@ -1,6 +1,5 @@
 import 'package:edupot/view/screens/bottomnavbar/custom_navbar.dart';
 import 'package:edupot/view/widgets/primary_button.dart';
-import 'package:edupot/viewmodels/students_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 

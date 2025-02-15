@@ -61,7 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _statsSection(constraints, viewModel),
+                         
                           kHeight20,
                           if (viewModel.bannerImages.isNotEmpty)
                             CarouselWithDots(
@@ -79,6 +79,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: Text('No banner images available'),
                               ),
                             ),
+
+                          const SizedBox(height: 20),
+                           _statsSection(constraints, viewModel),
                           const SizedBox(height: 20),
                           _pieChartSection(constraints, viewModel),
                           const SizedBox(height: 20),

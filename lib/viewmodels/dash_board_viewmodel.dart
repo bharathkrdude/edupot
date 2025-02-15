@@ -25,10 +25,6 @@ class DashboardViewModel extends ChangeNotifier {
       notifyListeners();
 
       final response = await _apiService.fetchDashboard();
-      
-      if (response is! Map<String, dynamic>) {
-        throw Exception('Invalid response format');
-      }
 
       _dashboardData = DashboardModel.fromJson(response);
       _error = '';

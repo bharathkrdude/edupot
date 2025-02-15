@@ -29,16 +29,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: CustomAppBar(
         title: 'Profile',
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const EditProfileScreen()),
-              );
+          Consumer<StaffProfileProvider>(
+            builder: (context, provider, child) {
+              final staff = provider.staffProfile!;
+              return staff.id == 0
+                  ? Container()
+                  : IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const EditProfileScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                    );
             },
-            icon: const Icon(Icons.edit, color: Colors.white),
-          )
+          ),
         ],
       ),
       body: SafeArea(
@@ -137,12 +144,12 @@ class InfoCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,

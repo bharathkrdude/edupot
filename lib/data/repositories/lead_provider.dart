@@ -11,13 +11,19 @@ class LeadProvider with ChangeNotifier {
   Future<bool> addLead(Lead lead) async {
     return await apiService.addLead(lead);
   }
-
-  Future<Map<String, dynamic>> fetchLeads({
+  Future<bool> updateLead(Lead lead) async {
+    return await apiService.updateLead(lead);
+  }
+  Future<List<String>> fetchStaff() async {
+    return await apiService.fetchStaffNames();
+  }
+  Future<LeadsResponse> fetchLeads({
     int page = 1,
     int perPage = 20,
     String? stage, // Optional
     String? fromDate, // Optional
     String? toDate, // Optional
+    String? staff, // Optional
   }) async {
     return await apiService.fetchLeads(
       page: page,
@@ -25,6 +31,7 @@ class LeadProvider with ChangeNotifier {
       stage: stage,
       fromDate: fromDate,
       toDate: toDate,
+      staff: staff,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:edupot/data/models/leads_model.dart';
+import 'package:edupot/data/models/staff_model.dart';
 import 'package:edupot/data/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,55 +8,83 @@ class ApiService {
   final Dio _dio = Dio();
 
   static const String baseUrl = 'https://edupotstudy.com/api/v1';
-  Future<Map<String, dynamic>> fetchLeads({
-    int page = 1,
-    int perPage = 20,
-    String? stage,
-    String? fromDate,
-    String? toDate,
-    
-  }) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
+  
+  Future<List<String>> fetchStaffNames() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      final response = await _dio.post(
-        'https://edupotstudy.com/api/v1/leads-multi',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-          'stage': stage,
-          'from_date': fromDate,
-          'to_date': toDate,
-          
-        },
-      );
-
-      if (response.statusCode == 200) {
-        return {
-          'leads': (response.data['leads'] as List)
-              .map((lead) => Lead.fromJson(lead))
-              .toList(),
-          'total': response.data['total'] ?? 0,
-          'current_page': response.data['current_page'] ?? 1,
-          'last_page': response.data['last_page'] ?? 1,
-        };
-      } else {
-        throw Exception('Failed to load leads');
-      }
-    } catch (e) {
-      throw Exception('Failed to load leads: $e');
+    if (token == null) {
+      throw Exception('Token not found');
     }
+
+    final response = await _dio.get(
+      '$baseUrl/staff-list',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final staffResponse = StaffResponse.fromJson(response.data);
+      return staffResponse.staffs.map((staff) => staff.name).toList();
+    } else {
+      throw Exception('Failed to load staff names');
+    }
+  } catch (e) {
+    throw Exception('Error fetching staff names: $e');
   }
+}
+
+  
+Future<LeadsResponse> fetchLeads({
+  int page = 1,
+  int perPage = 20,
+  String? stage,
+  String? fromDate,
+  String? toDate,
+  String? staff, // <-- Added staff parameter
+}) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    final response = await _dio.post(
+      '$baseUrl/leads-multi',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+      queryParameters: {
+        'page': page,
+        'per_page': perPage,
+        if (stage != null) 'stage': stage,
+        if (fromDate != null) 'from_date': fromDate,
+        if (toDate != null) 'to_date': toDate,
+        if (staff != null) 'staff': staff, // <-- Added staff parameter
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return LeadsResponse.fromJson(response.data);
+    } else {
+      throw Exception('Failed to load leads');
+    }
+  } catch (e) {
+    throw Exception('Failed to load leads: $e');
+  }
+}
+
+
 
   Future<bool> addLead(Lead lead) async {
     try {
@@ -83,7 +112,32 @@ class ApiService {
       throw Exception('Failed to add lead: $e');
     }
   }
+Future<bool>updateLead(Lead lead) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    final response = await _dio.post(
+      'https://edupotstudy.com/api/v1/leads-update/${lead.id}',
+      data: lead.toJson(),
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    return response.statusCode == 200;
+  } catch (e) {
+    throw Exception('Failed to update lead: $e');
+  }
+}
  Future<Map<String, dynamic>> fetchColleges() async {
   try {
     final prefs = await SharedPreferences.getInstance();

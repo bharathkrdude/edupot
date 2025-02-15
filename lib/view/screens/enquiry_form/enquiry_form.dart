@@ -122,24 +122,8 @@ class EnquiryForm extends StatelessWidget {
                           value, // Fixed: Changed from parentName to remark
                     ),
 
-                    // Star Rating
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Rating',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                        ],
-                      ),
-                    ),
+                    
+                    
 
                     // Stream Dropdown with conditional text field
                     Obx(() => Column(
@@ -147,7 +131,7 @@ class EnquiryForm extends StatelessWidget {
                             CustomDropdownField(
                               label: 'Stream',
                               icon: Icons.search,
-                              items: ['Science', 'Commerce', 'Other'],
+                              items: ['Science', 'Commerce','Humanities' ,'Other'],
                               value: viewModel.selectedStream.value,
                               onChanged: viewModel.updateStream,
                               validator: (value) =>

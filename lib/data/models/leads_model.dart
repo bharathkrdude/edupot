@@ -1,17 +1,17 @@
 class Lead {
    int id;
    String name;
-   String address;
+   String? address;
    String phone;
    String? email;
-   String parentName;
-   String parentPhone;
-   int? ownerId;
+   String? parentName;
+   String? parentPhone;
+   int? staffId;
    String stream;
   String? customStream;
    String status;
    String stage;
-   String remark;
+   String? remark;
    String? course;
   
    DateTime createdAt;
@@ -23,17 +23,17 @@ class Lead {
   Lead({
     required this.id,
     required this.name,
-    required this.address,
+     this.address,
     required this.phone,
     this.email,
-    required this.parentName,
-    required this.parentPhone,
-    this.ownerId,
+    this.parentName,
+   this.parentPhone,
+    this.staffId,
     required this.stream,
     this.customStream,
     required this.status,
     required this.stage,
-    required this.remark,
+     this.remark,
     this.course,
     
     required this.createdAt,
@@ -52,7 +52,7 @@ class Lead {
       email: json['email'],
       parentName: json['parent_name'],
       parentPhone: json['parent_phone'],
-      ownerId: json['owner_id'],
+      staffId: json['staff_id'],
       stream: json['stream'],
       customStream: json['custom_stream'],
       status: json['status'],
@@ -91,5 +91,29 @@ class Lead {
     data.removeWhere((key, value) => value == null);
 
     return data;
+  }
+}
+
+
+class LeadsResponse {
+  bool status;
+  String message;
+  int totalCount;
+  List<Lead> leads;
+
+  LeadsResponse({
+    required this.status,
+    required this.message,
+    required this.totalCount,
+    required this.leads,
+  });
+
+  factory LeadsResponse.fromJson(Map<String, dynamic> json) {
+    return LeadsResponse(
+      status: json['status'],
+      message: json['message'],
+      totalCount: json['total_count'],
+      leads: (json['leads'] as List).map((lead) => Lead.fromJson(lead)).toList(),
+    );
   }
 }

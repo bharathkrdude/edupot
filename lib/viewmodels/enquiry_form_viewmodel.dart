@@ -20,7 +20,7 @@ class EnquiryFormViewModel {
   String? stage;
   String? course;
   String? remark;
-  final RxInt star = 0.obs; // Changed from rating to star
+  final RxInt star = 0.obs; 
 
   final RxString selectedStream = ''.obs;
    final RxString selectedStatus = ''.obs;
@@ -29,9 +29,7 @@ class EnquiryFormViewModel {
 
   EnquiryFormViewModel({required this.leadProvider});
 
-  // void updateStar(int value) { // Changed from updateRating to updateStar
-  //   star.value = value;
-  // }
+  
 
   void updateStream(String? value) {
     selectedStream.value = value ?? '';
@@ -44,7 +42,6 @@ class EnquiryFormViewModel {
     if (value != null) {
       selectedStatus.value = value;
       status = value;
-      // Reset stage when status changes
       selectedStage.value = '';
       stage = null;
       updateStageItems(value);
@@ -114,11 +111,9 @@ Future<void> submitForm(BuildContext context) async {
 
       try {
         final success = await leadProvider.addLead(newLead);
-        // Close loading dialog
         Navigator.of(context, rootNavigator: true).pop();
 
         if (success) {
-          // Navigate to success page and remove all previous routes
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => SuccessPage(),
@@ -145,8 +140,8 @@ Future<void> submitForm(BuildContext context) async {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(),
+        return const Center(
+          child:  CircularProgressIndicator(),
         );
       },
     );
@@ -173,7 +168,7 @@ Future<void> submitForm(BuildContext context) async {
   void _showSnackBar(BuildContext context, String title, String message) {
     final snackBar = SnackBar(
       content: Text('$title: $message'),
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
