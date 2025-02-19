@@ -6,7 +6,7 @@ class SearchWidget extends StatelessWidget {
 
   const SearchWidget({
     super.key,
-    this.onChanged, // Add onChanged as a parameter
+    this.onChanged, 
   });
 
   @override

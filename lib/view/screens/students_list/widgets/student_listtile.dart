@@ -6,20 +6,20 @@ class StudentListTile extends StatelessWidget {
   final String stream;
   final String phone;
  
-  final VoidCallback? onPressed; // Add the onPressed callback
+  final VoidCallback? onPressed; 
 
   const StudentListTile({
     super.key,
     required this.name,
     required this.stream,
     required this.phone,
-    required this.onPressed, // Initialize the onPressed callback
+    required this.onPressed,  // Initialize the onPressed callback
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed, // Trigger the onPressed callback when tapped
+      onTap: onPressed, 
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -58,7 +58,6 @@ class StudentListTile extends StatelessWidget {
                 ),
               ),
               kWidth15,
-              // Student Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

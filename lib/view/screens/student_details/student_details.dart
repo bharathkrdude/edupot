@@ -15,19 +15,16 @@ import 'package:provider/provider.dart';
 /// Now accepts an optional onUpdated callback.
 void _editContactInformation(
   BuildContext context,
-  Lead student, {
-  VoidCallback? onUpdated,
-}) {
-  TextEditingController addressController =
-      TextEditingController(text: student.address);
-  TextEditingController phoneController =
-      TextEditingController(text: student.phone);
-  TextEditingController parentNameController =
-      TextEditingController(text: student.parentName);
-  TextEditingController parentPhoneController =
-      TextEditingController(text: student.parentPhone);
-  TextEditingController emailController =
-      TextEditingController(text: student.email ?? '');
+  Lead student, 
+  LeadProvider leadProvider, 
+  {VoidCallback? onUpdated}
+) {
+  TextEditingController nameController = TextEditingController(text: student.name);
+  TextEditingController addressController = TextEditingController(text: student.address);
+  TextEditingController phoneController = TextEditingController(text: student.phone);
+  TextEditingController parentNameController = TextEditingController(text: student.parentName);
+  TextEditingController parentPhoneController = TextEditingController(text: student.parentPhone);
+  TextEditingController emailController = TextEditingController(text: student.email ?? '');
 
   showDialog(
     context: context,
@@ -39,6 +36,12 @@ void _editContactInformation(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              CustomTextField(
+                label: 'Name',
+                icon: Icons.person_outline,
+                controller: nameController,
+                onSaved: (value) => student.name = value ?? '',
+              ),
               CustomTextField(
                 label: 'Address',
                 icon: Icons.location_on_outlined,
@@ -83,16 +86,26 @@ void _editContactInformation(
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: primaryButton),
-            onPressed: () {
-              // Update the student object.
+            onPressed: () async {
+              // Save updated contact info
+              student.name = nameController.text;
               student.address = addressController.text;
               student.phone = phoneController.text;
               student.parentName = parentNameController.text;
               student.parentPhone = parentPhoneController.text;
               student.email = emailController.text;
-              Navigator.pop(context);
-              if (onUpdated != null) {
-                onUpdated();
+
+              // Call updateLead method just like in edit academic fields
+              bool success = await leadProvider.updateLead(student);
+              if (success) {
+                Navigator.pop(context);
+                if (onUpdated != null) {
+                  onUpdated();
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to update lead. Please try again.')),
+                );
               }
             },
             child: const Text('Save', style: TextStyle(color: white)),
@@ -216,7 +229,6 @@ void _editAcademicFields(
       },
     ),
                   const SizedBox(height: 12),
-                  // CustomTextField for Remark.
                   CustomTextField(
                     label: 'Remark',
                     icon: Icons.assignment_outlined,
@@ -224,7 +236,6 @@ void _editAcademicFields(
                     onSaved: (value) => student.remark = value ?? '',
                   ),
                   const SizedBox(height: 12),
-                  // CustomTextField for Course.
                   CustomTextField(
                     label: 'Course',
                     icon: Icons.school_outlined,
@@ -247,7 +258,6 @@ void _editAcademicFields(
                 if (_formKey.currentState?.validate() ?? false) {
                   _formKey.currentState?.save();
 
-                  // Update dropdown values.
                   student.stream = selectedStream;
                   student.status = selectedStatus;
                   student.stage = selectedStage;
@@ -313,7 +323,6 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
             children: [
               StudentNameHeader(student: widget.student),
               const SizedBox(height: 20),
-              // Pass onUpdated callback to refresh UI after editing.
               ContactInformationSection(
                 student: widget.student,
                 onUpdated: () {
@@ -383,10 +392,11 @@ class ContactInformationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leadProvider = Provider.of<LeadProvider>(context, listen: false);
     return InformationSection(
       onPressed: () => _editContactInformation(
         context,
-        student,
+        student,leadProvider,
         onUpdated: onUpdated,
       ),
       title: 'Contact Information',

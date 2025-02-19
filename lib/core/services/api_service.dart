@@ -47,6 +47,7 @@ Future<LeadsResponse> fetchLeads({
   String? fromDate,
   String? toDate,
   String? staff, // <-- Added staff parameter
+  String? allData
 }) async {
   try {
     final prefs = await SharedPreferences.getInstance();
@@ -71,6 +72,7 @@ Future<LeadsResponse> fetchLeads({
         if (fromDate != null) 'from_date': fromDate,
         if (toDate != null) 'to_date': toDate,
         if (staff != null) 'staff': staff, // <-- Added staff parameter
+        if (allData != null) 'alldata': allData,
       },
     );
 

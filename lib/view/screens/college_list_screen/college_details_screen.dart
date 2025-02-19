@@ -1,3 +1,4 @@
+
 import 'package:edupot/data/models/college_model.dart';
 import 'package:edupot/view/screens/college_list_screen/brochure/brochure_screen.dart';
 import 'package:edupot/view/screens/fee_screen/fee_screen.dart';
@@ -35,6 +36,7 @@ class CollegeDetailsScreen extends StatefulWidget {
 }
 
 class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +102,7 @@ class _CollegeDetailsScreenState extends State<CollegeDetailsScreen> {
               ],
             ),
             child: CircleAvatar(
-              backgroundImage: widget.logo != null ? NetworkImage(widget.logo!) : null,
+              backgroundImage: widget.logo != null ? NetworkImage (widget.logo!) : NetworkImage('https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png'), 
               radius: 40,
               backgroundColor: Colors.white,
               child: widget.logo == null ? const Icon(Icons.school, size: 40, color: Colors.grey) : null,

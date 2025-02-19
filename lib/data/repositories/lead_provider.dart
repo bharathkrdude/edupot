@@ -24,6 +24,7 @@ class LeadProvider with ChangeNotifier {
     String? fromDate, // Optional
     String? toDate, // Optional
     String? staff, // Optional
+    String? allData, // Optional
   }) async {
     return await apiService.fetchLeads(
       page: page,
@@ -32,6 +33,7 @@ class LeadProvider with ChangeNotifier {
       fromDate: fromDate,
       toDate: toDate,
       staff: staff,
+      allData: allData,
     );
   }
 }

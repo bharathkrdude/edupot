@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:edupot/data/repositories/lead_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:edupot/data/models/leads_model.dart';
+import 'package:flutter/material.dart';
 
 class StudentViewModel extends ChangeNotifier {
   final LeadProvider _leadProvider;
   final _studentsController = StreamController<List<Lead>>.broadcast();
 
   List<Lead> _students = [];
-  List<Lead> _filteredStudents = [];
   bool _isLoading = false;
   bool _hasMoreData = true;
   int _currentPage = 1;
@@ -17,18 +16,19 @@ class StudentViewModel extends ChangeNotifier {
   int _totalStudents = 0;
   String _errorMessage = '';
 
+  // Filter values
   String? _selectedStage;
   String? _fromDate;
   String? _toDate;
   String? _staff;
+  String? _allData; // for search query
 
   StudentViewModel(this._leadProvider) {
     fetchStudents();
   }
 
   Stream<List<Lead>> get studentsStream => _studentsController.stream;
-  List<Lead> get students =>
-      _filteredStudents.isNotEmpty ? _filteredStudents : _students;
+  List<Lead> get students => _students;
   bool get isLoading => _isLoading;
   bool get hasMoreData => _hasMoreData;
   String get errorMessage => _errorMessage;
@@ -50,7 +50,7 @@ class StudentViewModel extends ChangeNotifier {
 
     try {
       print('Fetching leads: page=$_currentPage, perPage=$_perPage, '
-          'stage=$_selectedStage, fromDate=$_fromDate, toDate=$_toDate');
+          'stage=$_selectedStage, staff=$_staff, fromDate=$_fromDate, toDate=$_toDate, allData=$_allData');
 
       final leadsResponse = await _leadProvider.fetchLeads(
         page: _currentPage,
@@ -59,37 +59,30 @@ class StudentViewModel extends ChangeNotifier {
         fromDate: _fromDate,
         toDate: _toDate,
         staff: _staff,
+        allData: _allData,
       );
 
       final List<Lead> newStudents = leadsResponse.leads;
       final int totalRecords = leadsResponse.totalCount;
 
-      print(
-          'API Response: total_count=$totalRecords, newStudents=${newStudents.length}');
+      print('API Response: total_count=$totalRecords, newStudents=${newStudents.length}');
 
       _totalStudents = totalRecords;
       _totalPages = (totalRecords / _perPage).ceil();
       print('Total pages calculated: $_totalPages');
 
-      if (isRefresh) {
-        _students = newStudents;
-      } else {
-        _students.addAll(newStudents);
-      }
+      _students.addAll(newStudents);
 
       if (newStudents.length < _perPage) {
         _hasMoreData = false;
-        print(
-            'Fetched less than perPage ($_perPage). Setting _hasMoreData = false');
+        print('Fetched less than perPage ($_perPage). Setting _hasMoreData = false');
       } else {
-        _hasMoreData = _currentPage < _totalPages;
         _currentPage++;
-        print(
-            'Incrementing page. New currentPage=$_currentPage, hasMoreData=$_hasMoreData');
+        _hasMoreData = _currentPage <= _totalPages;
+        print('Incrementing page. New currentPage=$_currentPage, hasMoreData=$_hasMoreData');
       }
 
       print('Total students in list: ${_students.length}');
-
       _studentsController.add(List.from(_students));
       _errorMessage = '';
     } catch (e) {
@@ -111,14 +104,11 @@ class StudentViewModel extends ChangeNotifier {
     await fetchStudents(isRefresh: true);
   }
 
-  void applyFilters(
-      {String? stage, String? fromDate, String? toDate, String? staff}) {
-    print('applyFilters called with staff: $staff'); // Debug print
+  void applyFilters({String? stage, String? fromDate, String? toDate, String? staff}) {
     _selectedStage = stage;
     _fromDate = fromDate;
     _toDate = toDate;
     _staff = staff;
-    print('_staff set to: $_staff'); // Debug print
     refreshStudents();
   }
 
@@ -127,21 +117,15 @@ class StudentViewModel extends ChangeNotifier {
     _fromDate = null;
     _toDate = null;
     _staff = null;
+    _allData = null;
     refreshStudents();
     notifyListeners();
   }
 
+  // API-based search: set the _allData parameter and refresh the list.
   void searchStudents(String query) {
-    if (query.isEmpty) {
-      _filteredStudents = [];
-    } else {
-      _filteredStudents = _students
-          .where((student) =>
-              student.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-    _studentsController.add(List.from(_filteredStudents));
-    notifyListeners();
+    _allData = query.isEmpty ? null : query;
+    refreshStudents();
   }
 
   @override

@@ -145,73 +145,73 @@ class _ScreenStudentsState extends State<ScreenStudents> {
                   const SizedBox(height: 16),
 
                   // Staff Selection
-                 FutureBuilder<List<String>>(
-  future: fetchStaffList(),
-  builder: (context, snapshot) {
-    // Hide entire section if data exists and is empty
-    if (snapshot.hasData && snapshot.data!.isEmpty) {
-      return const SizedBox.shrink();
-    }
+                  FutureBuilder<List<String>>(
+                    future: fetchStaffList(),
+                    builder: (context, snapshot) {
+                      
+                      if (snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
 
-    // Section content based on state
-    Widget content;
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      content = const Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CircularProgressIndicator(),
-        ),
-      );
-    } else if (snapshot.hasError) {
-      content = Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey[200]!),
-        ),
-        child: const Text('Unable to load staff list'),
-      );
-    } else {
-      // Build staff list only if data exists and is non-empty
-      content = Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey[200]!),
-        ),
-        child: Column(
-          children: [
-            for (int i = 0; i < snapshot.data!.length; i++) ...[
-              if (i > 0) _buildDivider(),
-              _buildStaffOption(
-                snapshot.data![i],
-                selectedStaff,
-                (staff) => setBottomSheetState(() => selectedStaff = staff),
-              ),
-            ],
-          ],
-        ),
-      );
-    }
+                      Widget content;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        content = const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        content = Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: const Text('Unable to load staff list'),
+                        );
+                      } else {
+                        content = Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: Column(
+                            children: [
+                              for (int i = 0;
+                                  i < snapshot.data!.length;
+                                  i++) ...[
+                                if (i > 0) _buildDivider(),
+                                _buildStaffOption(
+                                  snapshot.data![i],
+                                  selectedStaff,
+                                  (staff) => setBottomSheetState(
+                                      () => selectedStaff = staff),
+                                ),
+                              ],
+                            ],
+                          ),
+                        );
+                      }
 
-    // Render entire section with title and content
-    return Column(
-      children: [
-        const Text(
-          'Staff',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        content,
-      ],
-    );
-  },
-),
+                      return Column(
+                        children: [
+                          const Text(
+                            'Staff',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          content,
+                        ],
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
 
                   const Text(
@@ -250,7 +250,6 @@ class _ScreenStudentsState extends State<ScreenStudents> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Date Range Section
                   const Text(
                     'Date Range',
                     style: TextStyle(
@@ -334,7 +333,6 @@ class _ScreenStudentsState extends State<ScreenStudents> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Action Buttons
                   Row(
                     children: [
                       Expanded(
@@ -374,11 +372,11 @@ class _ScreenStudentsState extends State<ScreenStudents> {
                             ),
                           ),
                           onPressed: () {
-                             print('About to apply filters with:');
-    print('Stage: $selectedStage');
-    print('Staff: $selectedStaff');  // Check staff value
-    print('From Date: $fromDate');
-    print('To Date: $toDate');
+                            print('About to apply filters with:');
+                            print('Stage: $selectedStage');
+                            print('Staff: $selectedStaff'); 
+                            print('From Date: $fromDate');
+                            print('To Date: $toDate');
                             context.read<StudentViewModel>().applyFilters(
                                   stage: selectedStage,
                                   fromDate: fromDate,
@@ -407,39 +405,40 @@ class _ScreenStudentsState extends State<ScreenStudents> {
     );
   }
 
-Widget _buildStaffOption(
-    String name, String? selectedStaff, Function(String) onSelect) {
-  final isSelected = name == selectedStaff;
-  
-  return InkWell(
-    onTap: () {
-      print('Staff option tapped: $name'); // Add this debug print
-      onSelect(name);
-    },
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            name,
-            style: TextStyle(
-              color: isSelected ? primaryButton : Colors.black87,
-              fontSize: 14,
-              fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+  Widget _buildStaffOption(
+      String name, String? selectedStaff, Function(String) onSelect) {
+    final isSelected = name == selectedStaff;
+
+    return InkWell(
+      onTap: () {
+        print('Staff option tapped: $name'); 
+        onSelect(name);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              name,
+              style: TextStyle(
+                color: isSelected ? primaryButton : Colors.black87,
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+              ),
             ),
-          ),
-          if (isSelected)
-            const Icon(
-              Icons.check_circle,
-              color: primaryButton,
-              size: 20,
-            ),
-        ],
+            if (isSelected)
+              const Icon(
+                Icons.check_circle,
+                color: primaryButton,
+                size: 20,
+              ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   Widget _buildStatusOption(
       String status, String? selectedStatus, StateSetter setState) {
     final isSelected = status == selectedStatus;

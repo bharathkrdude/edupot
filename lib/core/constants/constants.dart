@@ -28,7 +28,6 @@ const kWidth30 = SizedBox(width: 30);
 const kWidth40 = SizedBox(width: 40);
 const kWidth50 = SizedBox(width: 50);
 
-// Textstyles
 class TextStyles {
   static const TextStyle heading1 = TextStyle(
     fontSize: 32.0,

@@ -45,7 +45,7 @@ class CollegeCard extends StatelessWidget {
               university: university,
               address: address,
               about: about,
-              logo: fullLogoUrl ?? "",
+              logo: logo,
             location: location,
               brochurerelated: brochurerelated,
               feesrelated: feesrelated,
@@ -74,7 +74,7 @@ class CollegeCard extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundImage: fullLogoUrl != null 
-                ? NetworkImage(fullLogoUrl)
+                ? Image.network('$fullLogoUrl').image
                 : null,
               radius: 25,
               child: fullLogoUrl == null 
